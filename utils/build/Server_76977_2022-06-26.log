@@ -1,0 +1,303 @@
+2022-06-26 21:22:57.545767 ThreadID[1272999] [info]: HPPackServer::Start listen to 0.0.0.0:6000 successed
+2022-06-26 21:23:05.163607 ThreadID[1273097] [info]: HPPackServer::OnAccept accept an new connection dwConnID:1 from 127.0.0.1:40844
+2022-06-26 21:23:05.163800 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163820 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163823 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163831 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163834 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163837 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163849 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163857 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163860 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163863 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163866 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163869 ThreadID[1272999] [info]: Test Message, Account:Test000, Content:Hello Server 000
+2022-06-26 21:23:05.163887 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163873 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163902 ThreadID[1272999] [info]: Test Message, Account:Test001, Content:Hello Server 001
+2022-06-26 21:23:05.163907 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163909 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163912 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163913 ThreadID[1272999] [info]: Test Message, Account:Test002, Content:Hello Server 002
+2022-06-26 21:23:05.163915 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163919 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163930 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163932 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163934 ThreadID[1272999] [info]: Test Message, Account:Test003, Content:Hello Server 003
+2022-06-26 21:23:05.163938 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163939 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163942 ThreadID[1272999] [info]: Test Message, Account:Test004, Content:Hello Server 004
+2022-06-26 21:23:05.163942 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163945 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163946 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163948 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163950 ThreadID[1272999] [info]: Test Message, Account:Test005, Content:Hello Server 005
+2022-06-26 21:23:05.163951 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163960 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163963 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.163964 ThreadID[1272999] [info]: Test Message, Account:Test006, Content:Hello Server 006
+2022-06-26 21:23:05.163974 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164001 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164008 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164014 ThreadID[1272999] [info]: Test Message, Account:Test007, Content:Hello Server 007
+2022-06-26 21:23:05.164014 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164020 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164020 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164026 ThreadID[1272999] [info]: Test Message, Account:Test008, Content:Hello Server 008
+2022-06-26 21:23:05.164031 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164031 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164035 ThreadID[1272999] [info]: Test Message, Account:Test009, Content:Hello Server 009
+2022-06-26 21:23:05.164039 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164041 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164042 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164045 ThreadID[1272999] [info]: Test Message, Account:Test010, Content:Hello Server 010
+2022-06-26 21:23:05.164052 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164059 ThreadID[1272999] [info]: Test Message, Account:Test011, Content:Hello Server 011
+2022-06-26 21:23:05.164065 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164069 ThreadID[1272999] [info]: Test Message, Account:Test012, Content:Hello Server 012
+2022-06-26 21:23:05.164074 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164078 ThreadID[1272999] [info]: Test Message, Account:Test013, Content:Hello Server 013
+2022-06-26 21:23:05.164083 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164087 ThreadID[1272999] [info]: Test Message, Account:Test014, Content:Hello Server 014
+2022-06-26 21:23:05.164092 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164096 ThreadID[1272999] [info]: Test Message, Account:Test015, Content:Hello Server 015
+2022-06-26 21:23:05.164101 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164106 ThreadID[1272999] [info]: Test Message, Account:Test016, Content:Hello Server 016
+2022-06-26 21:23:05.164111 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164115 ThreadID[1272999] [info]: Test Message, Account:Test017, Content:Hello Server 017
+2022-06-26 21:23:05.164120 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164125 ThreadID[1272999] [info]: Test Message, Account:Test018, Content:Hello Server 018
+2022-06-26 21:23:05.164132 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164137 ThreadID[1272999] [info]: Test Message, Account:Test019, Content:Hello Server 019
+2022-06-26 21:23:05.164142 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164146 ThreadID[1272999] [info]: Test Message, Account:Test020, Content:Hello Server 020
+2022-06-26 21:23:05.164151 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164155 ThreadID[1272999] [info]: Test Message, Account:Test021, Content:Hello Server 021
+2022-06-26 21:23:05.164160 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164177 ThreadID[1272999] [info]: Test Message, Account:Test022, Content:Hello Server 022
+2022-06-26 21:23:05.164181 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164186 ThreadID[1272999] [info]: Test Message, Account:Test023, Content:Hello Server 023
+2022-06-26 21:23:05.164191 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164198 ThreadID[1272999] [info]: Test Message, Account:Test024, Content:Hello Server 024
+2022-06-26 21:23:05.164204 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164208 ThreadID[1272999] [info]: Test Message, Account:Test025, Content:Hello Server 025
+2022-06-26 21:23:05.164214 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164218 ThreadID[1272999] [info]: Test Message, Account:Test026, Content:Hello Server 026
+2022-06-26 21:23:05.164223 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164227 ThreadID[1272999] [info]: Test Message, Account:Test027, Content:Hello Server 027
+2022-06-26 21:23:05.164232 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164236 ThreadID[1272999] [info]: Test Message, Account:Test028, Content:Hello Server 028
+2022-06-26 21:23:05.164513 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164519 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164521 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164524 ThreadID[1272999] [info]: Test Message, Account:Test029, Content:Hello Server 029
+2022-06-26 21:23:05.164527 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164530 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164533 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164534 ThreadID[1272999] [info]: Test Message, Account:Test030, Content:Hello Server 030
+2022-06-26 21:23:05.164551 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164551 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164555 ThreadID[1272999] [info]: Test Message, Account:Test031, Content:Hello Server 031
+2022-06-26 21:23:05.164561 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164564 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164565 ThreadID[1272999] [info]: Test Message, Account:Test032, Content:Hello Server 032
+2022-06-26 21:23:05.164574 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164577 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164580 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164582 ThreadID[1272999] [info]: Test Message, Account:Test033, Content:Hello Server 033
+2022-06-26 21:23:05.164595 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164600 ThreadID[1272999] [info]: Test Message, Account:Test034, Content:Hello Server 034
+2022-06-26 21:23:05.164600 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164605 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164607 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164610 ThreadID[1272999] [info]: Test Message, Account:Test035, Content:Hello Server 035
+2022-06-26 21:23:05.164615 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164643 ThreadID[1272999] [info]: Test Message, Account:Test036, Content:Hello Server 036
+2022-06-26 21:23:05.164617 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164659 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164664 ThreadID[1272999] [info]: Test Message, Account:Test037, Content:Hello Server 037
+2022-06-26 21:23:05.164664 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164669 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164670 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164673 ThreadID[1272999] [info]: Test Message, Account:Test038, Content:Hello Server 038
+2022-06-26 21:23:05.164675 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164678 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164683 ThreadID[1272999] [info]: Test Message, Account:Test039, Content:Hello Server 039
+2022-06-26 21:23:05.164688 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164688 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164692 ThreadID[1272999] [info]: Test Message, Account:Test040, Content:Hello Server 040
+2022-06-26 21:23:05.164697 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164700 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164701 ThreadID[1272999] [info]: Test Message, Account:Test041, Content:Hello Server 041
+2022-06-26 21:23:05.164710 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164714 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164716 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164719 ThreadID[1272999] [info]: Test Message, Account:Test042, Content:Hello Server 042
+2022-06-26 21:23:05.164721 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164724 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164731 ThreadID[1272999] [info]: Test Message, Account:Test043, Content:Hello Server 043
+2022-06-26 21:23:05.164734 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164738 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164740 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164745 ThreadID[1272999] [info]: Test Message, Account:Test044, Content:Hello Server 044
+2022-06-26 21:23:05.164751 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164752 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164760 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164765 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164768 ThreadID[1272999] [info]: Test Message, Account:Test045, Content:Hello Server 045
+2022-06-26 21:23:05.164775 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164775 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164781 ThreadID[1272999] [info]: Test Message, Account:Test046, Content:Hello Server 046
+2022-06-26 21:23:05.164780 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164789 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164838 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164840 ThreadID[1272999] [info]: Test Message, Account:Test047, Content:Hello Server 047
+2022-06-26 21:23:05.164847 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164855 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164856 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164863 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164871 ThreadID[1272999] [info]: Test Message, Account:Test048, Content:Hello Server 048
+2022-06-26 21:23:05.164877 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164878 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164889 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164891 ThreadID[1272999] [info]: Test Message, Account:Test049, Content:Hello Server 049
+2022-06-26 21:23:05.164897 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164902 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164903 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164910 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164915 ThreadID[1272999] [info]: Test Message, Account:Test050, Content:Hello Server 050
+2022-06-26 21:23:05.164915 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164921 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164925 ThreadID[1272999] [info]: Test Message, Account:Test051, Content:Hello Server 051
+2022-06-26 21:23:05.164926 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164930 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164935 ThreadID[1272999] [info]: Test Message, Account:Test052, Content:Hello Server 052
+2022-06-26 21:23:05.164935 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164940 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164940 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164946 ThreadID[1272999] [info]: Test Message, Account:Test053, Content:Hello Server 053
+2022-06-26 21:23:05.164946 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164951 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164954 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164956 ThreadID[1272999] [info]: Test Message, Account:Test054, Content:Hello Server 054
+2022-06-26 21:23:05.164957 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164961 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164964 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164966 ThreadID[1272999] [info]: Test Message, Account:Test055, Content:Hello Server 055
+2022-06-26 21:23:05.164967 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164970 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164971 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164993 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.164999 ThreadID[1272999] [info]: Test Message, Account:Test056, Content:Hello Server 056
+2022-06-26 21:23:05.165001 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165004 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165009 ThreadID[1272999] [info]: Test Message, Account:Test057, Content:Hello Server 057
+2022-06-26 21:23:05.165014 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165018 ThreadID[1272999] [info]: Test Message, Account:Test058, Content:Hello Server 058
+2022-06-26 21:23:05.165023 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165027 ThreadID[1272999] [info]: Test Message, Account:Test059, Content:Hello Server 059
+2022-06-26 21:23:05.165032 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165037 ThreadID[1272999] [info]: Test Message, Account:Test060, Content:Hello Server 060
+2022-06-26 21:23:05.165039 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165042 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165046 ThreadID[1272999] [info]: Test Message, Account:Test061, Content:Hello Server 061
+2022-06-26 21:23:05.165047 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165050 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165051 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165054 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165057 ThreadID[1272999] [info]: Test Message, Account:Test062, Content:Hello Server 062
+2022-06-26 21:23:05.165062 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165062 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165066 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165067 ThreadID[1272999] [info]: Test Message, Account:Test063, Content:Hello Server 063
+2022-06-26 21:23:05.165072 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165072 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165077 ThreadID[1272999] [info]: Test Message, Account:Test064, Content:Hello Server 064
+2022-06-26 21:23:05.165077 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165081 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165082 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165086 ThreadID[1272999] [info]: Test Message, Account:Test065, Content:Hello Server 065
+2022-06-26 21:23:05.165089 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165091 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165092 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165096 ThreadID[1272999] [info]: Test Message, Account:Test066, Content:Hello Server 066
+2022-06-26 21:23:05.165099 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165101 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165102 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165105 ThreadID[1272999] [info]: Test Message, Account:Test067, Content:Hello Server 067
+2022-06-26 21:23:05.165126 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165132 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165133 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165139 ThreadID[1272999] [info]: Test Message, Account:Test068, Content:Hello Server 068
+2022-06-26 21:23:05.165141 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165144 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165148 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165149 ThreadID[1272999] [info]: Test Message, Account:Test069, Content:Hello Server 069
+2022-06-26 21:23:05.165154 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165160 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165161 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165163 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165166 ThreadID[1272999] [info]: Test Message, Account:Test070, Content:Hello Server 070
+2022-06-26 21:23:05.165167 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165171 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165173 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165176 ThreadID[1272999] [info]: Test Message, Account:Test071, Content:Hello Server 071
+2022-06-26 21:23:05.165181 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165185 ThreadID[1272999] [info]: Test Message, Account:Test072, Content:Hello Server 072
+2022-06-26 21:23:05.165190 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165193 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165194 ThreadID[1272999] [info]: Test Message, Account:Test073, Content:Hello Server 073
+2022-06-26 21:23:05.165198 ThreadID[1273097] [info]: HPPackServer::OnReceive receive PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165201 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165206 ThreadID[1272999] [info]: Test Message, Account:Test074, Content:Hello Server 074
+2022-06-26 21:23:05.165211 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165215 ThreadID[1272999] [info]: Test Message, Account:Test075, Content:Hello Server 075
+2022-06-26 21:23:05.165219 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165224 ThreadID[1272999] [info]: Test Message, Account:Test076, Content:Hello Server 076
+2022-06-26 21:23:05.165227 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165230 ThreadID[1272999] [info]: Test Message, Account:Test077, Content:Hello Server 077
+2022-06-26 21:23:05.165234 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165237 ThreadID[1272999] [info]: Test Message, Account:Test078, Content:Hello Server 078
+2022-06-26 21:23:05.165241 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165245 ThreadID[1272999] [info]: Test Message, Account:Test079, Content:Hello Server 079
+2022-06-26 21:23:05.165250 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165254 ThreadID[1272999] [info]: Test Message, Account:Test080, Content:Hello Server 080
+2022-06-26 21:23:05.165275 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165279 ThreadID[1272999] [info]: Test Message, Account:Test081, Content:Hello Server 081
+2022-06-26 21:23:05.165283 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165287 ThreadID[1272999] [info]: Test Message, Account:Test082, Content:Hello Server 082
+2022-06-26 21:23:05.165290 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165293 ThreadID[1272999] [info]: Test Message, Account:Test083, Content:Hello Server 083
+2022-06-26 21:23:05.165297 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165300 ThreadID[1272999] [info]: Test Message, Account:Test084, Content:Hello Server 084
+2022-06-26 21:23:05.165305 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165309 ThreadID[1272999] [info]: Test Message, Account:Test085, Content:Hello Server 085
+2022-06-26 21:23:05.165314 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165318 ThreadID[1272999] [info]: Test Message, Account:Test086, Content:Hello Server 086
+2022-06-26 21:23:05.165322 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165326 ThreadID[1272999] [info]: Test Message, Account:Test087, Content:Hello Server 087
+2022-06-26 21:23:05.165330 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165334 ThreadID[1272999] [info]: Test Message, Account:Test088, Content:Hello Server 088
+2022-06-26 21:23:05.165338 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165342 ThreadID[1272999] [info]: Test Message, Account:Test089, Content:Hello Server 089
+2022-06-26 21:23:05.165347 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165351 ThreadID[1272999] [info]: Test Message, Account:Test090, Content:Hello Server 090
+2022-06-26 21:23:05.165355 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165359 ThreadID[1272999] [info]: Test Message, Account:Test091, Content:Hello Server 091
+2022-06-26 21:23:05.165363 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165367 ThreadID[1272999] [info]: Test Message, Account:Test092, Content:Hello Server 092
+2022-06-26 21:23:05.165371 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165374 ThreadID[1272999] [info]: Test Message, Account:Test093, Content:Hello Server 093
+2022-06-26 21:23:05.165379 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165383 ThreadID[1272999] [info]: Test Message, Account:Test094, Content:Hello Server 094
+2022-06-26 21:23:05.165388 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165393 ThreadID[1272999] [info]: Test Message, Account:Test095, Content:Hello Server 095
+2022-06-26 21:23:05.165398 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165402 ThreadID[1272999] [info]: Test Message, Account:Test096, Content:Hello Server 096
+2022-06-26 21:23:05.165407 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165411 ThreadID[1272999] [info]: Test Message, Account:Test097, Content:Hello Server 097
+2022-06-26 21:23:05.165416 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165420 ThreadID[1272999] [info]: Test Message, Account:Test098, Content:Hello Server 098
+2022-06-26 21:23:05.165425 ThreadID[1272999] [info]: Receive an new PackMessage, MessageType:0XFF00
+2022-06-26 21:23:05.165429 ThreadID[1272999] [info]: Test Message, Account:Test099, Content:Hello Server 099
+2022-06-26 21:23:10.165176 ThreadID[1273097] [warning]: HPPackServer::OnClose have an connection dwConnID:1 from 127.0.0.1:40844 closed

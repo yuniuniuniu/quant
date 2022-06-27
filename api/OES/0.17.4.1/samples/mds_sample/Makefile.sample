@@ -1,0 +1,27 @@
+## ==> make -f Makefile.sample
+
+INC_DIR   = ../../include
+LIB_DIR   = ../../linux64
+#LIB_DIR   = ../../macos64
+#LIB_DIR   = ../../win32
+#LIB_DIR   = ../../win64
+
+CC_CFLAGS = -g -Wall
+CC_LFLAGS_API = -loes_api
+#CC_LFLAGS_API = -lmds_api
+CC_LFLAGS_EXT = -lpthread -lm
+#CC_LFLAGS_WIN32 = -lws2_32 -liphlpapi
+CC_LFLAGS = $(CC_LFLAGS_API) $(CC_LFLAGS_EXT) $(CC_LFLAGS_WIN32)
+
+all:
+	gcc $(CC_CFLAGS) -I$(INC_DIR) 01_mds_async_tcp_sample.c -L$(LIB_DIR) $(CC_LFLAGS) -o 01_mds_async_tcp_sample
+	gcc $(CC_CFLAGS) -I$(INC_DIR) 02_mds_async_tcp_sample.minimal.c -L$(LIB_DIR) $(CC_LFLAGS) -o 02_mds_async_tcp_sample.minimal
+	gcc $(CC_CFLAGS) -I$(INC_DIR) 03_mds_async_udp_sample.c -L$(LIB_DIR) $(CC_LFLAGS) -o 03_mds_async_udp_sample
+	gcc $(CC_CFLAGS) -I$(INC_DIR) 04_mds_sync_tcp_sample.c -L$(LIB_DIR) $(CC_LFLAGS) -o 04_mds_sync_tcp_sample
+	gcc $(CC_CFLAGS) -I$(INC_DIR) 05_mds_sync_udp_sample.c -L$(LIB_DIR) $(CC_LFLAGS) -o 05_mds_sync_udp_sample
+	gcc $(CC_CFLAGS) -I$(INC_DIR) 06_mds_query_sample.c -L$(LIB_DIR) $(CC_LFLAGS) -o 06_mds_query_sample
+	gcc $(CC_CFLAGS) -I$(INC_DIR) 07_mds_strerror_sample.c -L$(LIB_DIR) $(CC_LFLAGS) -o mds_strerror
+	gcc $(CC_CFLAGS) -I$(INC_DIR) 08_mds_subscribe_by_query_detail_sample.c -L$(LIB_DIR) $(CC_LFLAGS) -o 08_mds_subscribe_by_query_detail_sample
+
+clean:
+	@rm -fr *.o *.dSYM 01_mds_async_tcp_sample 02_mds_async_tcp_sample.minimal 03_mds_async_udp_sample 04_mds_sync_tcp_sample 05_mds_sync_udp_sample 06_mds_query_sample mds_strerror 08_mds_subscribe_by_query_detail_sample

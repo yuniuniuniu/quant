@@ -1,0 +1,60 @@
+TickerList:                             
+  -
+    TickerIndex: 0
+    Ticker: IC2204
+    ExchangeID: CFFEX
+    
+  -
+    TickerIndex: 1
+    Ticker: IC2205
+    ExchangeID: CFFEX
+
+  -
+    TickerIndex: 2
+    Ticker: IC2206
+    ExchangeID: CFFEX
+
+  -
+    TickerIndex: 3
+    Ticker: IC2209
+    ExchangeID: CFFEX
+
+  -
+    TickerIndex: 4
+    Ticker: IF2204
+    ExchangeID: CFFEX
+
+  -
+    TickerIndex: 5
+    Ticker: IF2205
+    ExchangeID: CFFEX
+  -
+    TickerIndex: 6
+    Ticker: IF2206
+    ExchangeID: CFFEX
+
+  -
+    TickerIndex: 7
+    Ticker: IF2209
+    ExchangeID: CFFEX
+
+  -
+    TickerIndex: 8
+    Ticker: IH2204
+    ExchangeID: CFFEX
+
+  -
+    TickerIndex: 9
+    Ticker: IH2205
+    ExchangeID: CFFEX
+
+  -
+    TickerIndex: 10
+    Ticker: IH2206
+    ExchangeID: CFFEX
+    
+  -
+    TickerIndex: 11
+    Ticker: IH2209
+    ExchangeID: CFFEX
+

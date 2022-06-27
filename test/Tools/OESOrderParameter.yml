@@ -1,0 +1,12 @@
+OrderParameter:
+  Account: 1888000729 
+  Ticker: 000001.SZ
+  ExchangeID: SZ
+  OrderType: 3
+  Direction: 1
+  Offset: 1
+  Price: 17
+  Volume: 1000
+  TimeOut: 1
+  Count: 10
+  

@@ -1,0 +1,5 @@
+XMonitorConfig:
+  XServerIP: 127.0.0.1
+  XServerPort: 8000
+  UserName: admin
+  PassWord: 123456

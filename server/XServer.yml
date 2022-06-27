@@ -1,0 +1,11 @@
+XServerConfig:
+  ServerIP: 127.0.0.1
+  Port: 8000
+  OpenTime: 09:00:00.000
+  CloseTime: 15:30:00.000
+  SnapShot: true
+  BinPath: /home/yb/ctpsystem/quant/server/Bin/
+  UserDBPath: /home/yb/ctpsystem/quant/server/XServer.db
+  AppCheckTime: 09:20:00.000
+
+

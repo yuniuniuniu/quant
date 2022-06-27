@@ -1,0 +1,11 @@
+XWatcherConfig:
+  ServerIP: 0.0.0.0
+  Port: 8001
+  Colo: XServer
+  OpenTime: 09:00:00.000
+  CloseTime: 23:55:00.000
+  XServerIP: 127.0.0.1
+  XServerPort: 8000
+  Mount1: /
+  Mount2: /home/
+

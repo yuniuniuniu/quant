@@ -1,0 +1,7 @@
+XRiskJudgeConfig:
+  ServerIP: 127.0.0.1
+  ServerPort: 8008
+  RiskID: Risk-1
+  RiskDBPath: /home/yb/ctpsystem/quant/riskjudge/XRiskJudge.db
+  XWatcherIP: 127.0.0.1
+  XWatcherPort: 8001

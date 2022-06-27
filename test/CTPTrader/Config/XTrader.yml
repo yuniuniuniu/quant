@@ -1,0 +1,45 @@
+XTraderConfig:
+  ExchangeID: CFFEX
+  Product : Test
+  Broker : CTP
+  BrokerID : 9999
+  Account : 188795
+  Password : YYLyyl@123.com
+  BussinessType: 3
+  AppID : simnow_client_test
+  AuthCode : 0000000000000000
+  Colo: XServer
+  ServerIP: 127.0.0.1
+  Port: 8001
+  OpenTime: 09:00:00.000
+  CloseTime: 23:30:00.000
+  TraderTimeOut: 1000000
+  OrderChannelKey: 0XFF000002
+  ReportChannelKey: 0XFF000003
+  QryFund: true
+  QryPosition: true
+  TickerListPath: /home/xtrader/Test/CTPTrader/Config/TickerList.yml 
+  ErrorPath: /home/xtrader/Test/CTPTrader/Config/Error.yml
+  RiskServerIP: 127.0.0.1
+  RiskServerPort: 8008
+  TraderAPI: CTP
+  TraderAPIConfig: /home/xtrader/Test/CTPTrader/Config/XTrader.yml
+
+REMConfig:
+  TradeServerIP : 125.64.36.25
+  TradeServerPort : 20000
+  TradeServerUDPPort : 19999
+  QueryServerIP : 125.64.36.25
+  QueryServerPort : 20001
+  QuoteServerIP : 125.64.36.25
+  QuoteServerPort : 20006
+  LocalTradeIP : 172.17.103.227
+  LocalTradeUDPPort: 19999
+  EESTraderLibPath: /home/xtrader/Test/REMTrader/Lib/
+
+CTPConfig:
+  FrontAddr: tcp://180.168.146.187:10202
+  #FrontAddr: tcp://180.168.146.187:10130
+
+YDConfig:
+  APIConfig: /home/xtrader/Test/YDTrader/Config/yd.txt

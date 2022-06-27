@@ -1,0 +1,3 @@
+RunPosition=WAN
+TradingServerIP=118.190.175.212
+TradingServerPort=40600

@@ -1,0 +1,45 @@
+XTraderConfig:
+  ExchangeID: CFFEX
+  Product : Test
+  Broker : OES
+  BrokerID : 8888
+  Account : 1888000729
+  Password : 1
+  BussinessType: 2
+  AppID : client
+  AuthCode : client_auth_code
+  Colo: XServer
+  ServerIP: 127.0.0.1
+  Port: 8001
+  OpenTime: 09:00:00.000
+  CloseTime: 23:30:00.000
+  TraderTimeOut: 1000000
+  OrderChannelKey: 0XFF000002
+  ReportChannelKey: 0XFF000003
+  QryFund: false
+  CancelAll: true
+  TickerListPath: /home/xtrader/Test/OESTrader/Config/TickerList.yml 
+  ErrorPath: /home/xtrader/Test/OESTrader/Config/OESError.yml
+  RiskServerIP: 127.0.0.1
+  RiskServerPort: 8008
+  TraderAPI: OES
+  TraderAPIConfig: /home/xtrader/Test/OESTrader/Config/OESAPIC.conf
+
+REMConfig:
+  TradeServerIP: 183.129.220.106
+  TradeServerPort: 21000
+  TradeServerUDPPort: 0
+  QueryServerIP: 183.129.220.106
+  QueryServerPort: 21001
+  QuoteServerIP: 183.129.220.106
+  QuoteServerPort: 21006
+  LocalTradeIP: 
+  LocalTradeUDPPort: 0 
+  EESTraderLibPath: /home/xtrader/Test/REMTrader/Lib/
+
+CTPConfig:
+  FrontAddr: tcp://180.168.146.187:10201
+  #FrontAddr: tcp://180.168.146.187:10130
+
+YDConfig:
+  APIConfig: /home/xtrader/Test/YDTrader/Config/YDAPI.txt

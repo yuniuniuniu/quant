@@ -1,0 +1,21 @@
+MarketCenterConfig:
+  ServerIP: 127.0.0.1
+  Port: 8001
+  Source: CTP
+  ToMonitor : true
+  TotalTick: 28801
+  MarketChannelKey: 0XFF000001
+  RecvTimeOut: 60000
+  CallAuctionPeriod: 09:29:00.000
+  ContinuousAuctionPeriod:
+                  - 09:30:00.000-11:30:00.000
+                  - 13:00:00.000-15:00:00.000
+  TickerListPath: /home/yb/ctpsystem/quant/marketcenter/Config/CFFEXTickerList.yml
+
+CTPMarketSource:
+  FrontAddr: tcp://180.168.146.187:10211
+  #FrontAddr: tcp://180.168.146.187:10131
+  BrokerID: 9999
+  Account: 188795
+  Password: XXXXXX
+  TickerListPath: /home/yb/ctpsystem/quant/marketcenter/Config/CFFEXTickerList.yml

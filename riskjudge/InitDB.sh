@@ -1,0 +1,4 @@
+echo "CREATE TABLE IF NOT EXISTS RiskLimitTable(ID INTEGER PRIMARY KEY AUTOINCREMENT, RiskID CHAR(32), FlowLimit INTEGER NOT NULL, TickerCancelLimit INTEGER NOT NULL, OrderCancelLimit INTEGER NOT NULL, Trader CHAR(32), UpdateTime CHAR(32));" | sqlite3 XRiskJudge.db
+echo "INSERT INTO  RiskLimitTable(RiskID, FlowLimit, TickerCancelLimit, OrderCancelLimit, Trader, UpdateTime) VALUES ('Risk-1', 10, 400, 5, 'trader', '2022-04-18 13:25:45.235641');" | sqlite3 XRiskJudge.db
+echo "CREATE TABLE IF NOT EXISTS LockedAccountTable(ID INTEGER PRIMARY KEY AUTOINCREMENT, RiskID CHAR(32), Account CHAR(32), Ticker CHAR(32),LockedSide INTEGER NOT NULL, Trader CHAR(32), UpdateTime CHAR(32));" | sqlite3 XRiskJudge.db
+echo "CREATE TABLE IF NOT EXISTS CancelledCountTable(ID INTEGER PRIMARY KEY AUTOINCREMENT, RiskID CHAR(32), Account CHAR[32], Ticker CHAR[32], CancelledCount INTEGER NOT NULL, UpperLimit INTEGER NOT NULL, Trader CHAR(32), UpdateTime CHAR(32));" | sqlite3 XRiskJudge.db

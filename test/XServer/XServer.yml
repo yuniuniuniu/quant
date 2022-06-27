@@ -1,0 +1,9 @@
+XServerConfig:
+  ServerIP: 127.0.0.1
+  Port: 8000
+  OpenTime: 09:00:00.000
+  CloseTime: 15:30:00.000
+  SnapShot: true
+  BinPath: /home/xtrader/Test/XServer/Bin/
+  UserDBPath: /home/xtrader/Test/XServer/XServer.db
+  AppCheckTime: 09:20:00.000
