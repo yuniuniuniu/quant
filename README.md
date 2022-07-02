@@ -18,8 +18,6 @@
 
 
 
-
-
 #### 待完成
 
 1、实现客户端操作界面，方便展示监控详情
@@ -40,9 +38,10 @@
 
 ![summary.png](https://github.com/yuniuniuniu/quant/blob/main/jpg/summary.png?raw=true)
 
-
-
-
+<br/>
+<br/>
+<br/>
+<br/>
 
 #### 项目与柜台交互
 
@@ -111,6 +110,40 @@ quant：
 策略进程，根据行情出发交易信号
 
 
+
+<br/>
+<br/>
+
+
+### 模块间通信协议[PackMessage.hpp]
+```c++
+struct PackMessage
+{
+    unsigned int MessageType;
+    union
+    {
+        TTest Test;                                     // 0XFF00
+        TLoginRequest LoginRequest;                     // 0XFF01
+        TLoginResponse LoginResponse;                   // 0XFF02
+        TCommand Command;                               // 0XFF03
+        TEventLog EventLog;                             // 0XFF04
+        TOrderStatus OrderStatus;                       // 0XFF05
+        TAccountFund AccountFund;                       // 0XFF06
+        TAccountPosition AccountPosition;               // 0XFF07
+        TOrderRequest OrderRequest;                     // 0XFF08
+        TActionRequest ActionRequest;                   // 0XFF09
+        TRiskReport RiskReport;                         // 0XFF0A
+        TColoStatus ColoStatus;                         // 0XFF0B
+        TAppStatus AppStatus;                           // 0XFF0C
+        MarketData::TFutureMarketData FutureMarketData; // 0XFFB1
+        MarketData::TStockMarketData StockMarketData;   // 0XFFB2
+    };
+};
+
+
+
+
+```
 
 
 
