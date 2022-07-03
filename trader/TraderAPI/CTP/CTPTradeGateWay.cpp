@@ -5,8 +5,8 @@ CreateObjectFunc(CTPTradeGateWay);
 
 CTPTradeGateWay::CTPTradeGateWay()
 {
-    m_RequestID = 0;
-    m_ConnectedStatus = Message::ELoginStatus::ELOGIN_PREPARED;
+    m_RequestID = 0;   ///请求id初始化为0
+    m_ConnectedStatus = Message::ELoginStatus::ELOGIN_PREPARED;  /// 初始化连接状态为准备登陆
 }
 
 CTPTradeGateWay::~CTPTradeGateWay()
@@ -48,7 +48,7 @@ void CTPTradeGateWay::LoadAPIConfig()
     {
         app_log_path = p;
     }
-    // 创建flow目录
+    // 创建flow目录，其中为.con文件
     std::string flowPath = app_log_path;
     flowPath = app_log_path + "/flow/";
     mkdir(flowPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -97,19 +97,19 @@ void CTPTradeGateWay::DestroyTraderAPI()
 void CTPTradeGateWay::LoadTrader()
 {
     // 注册事件类
-    m_CTPTraderAPI->RegisterSpi(this);
-    m_CTPTraderAPI->SubscribePublicTopic(THOST_TERT_QUICK);
-    m_CTPTraderAPI->SubscribePrivateTopic(THOST_TERT_QUICK);
-    m_CTPTraderAPI->RegisterFront(const_cast<char*>(m_CTPConfig.FrontAddr.c_str()));
-    m_CTPTraderAPI->Init();
+    m_CTPTraderAPI->RegisterSpi(this);  /// 用这个继承交易网关类的指针注册回调
+    m_CTPTraderAPI->SubscribePublicTopic(THOST_TERT_QUICK);   ///订阅共有流
+    m_CTPTraderAPI->SubscribePrivateTopic(THOST_TERT_QUICK);  ///订阅私有流
+    m_CTPTraderAPI->RegisterFront(const_cast<char*>(m_CTPConfig.FrontAddr.c_str()));   ///注册前置机
+    m_CTPTraderAPI->Init();   ///连接柜台
     m_Logger->Log->info("CTPTrader::LoadTrader Account:{} Front:{}", m_XTraderConfig.Account, m_CTPConfig.FrontAddr);
 }
 
 void CTPTradeGateWay::ReLoadTrader()
 {
-    if(Message::ELoginStatus::ELOGIN_SUCCESSED != m_ConnectedStatus)
+    if(Message::ELoginStatus::ELOGIN_SUCCESSED != m_ConnectedStatus)   ///如果连接状态还是登陆成功，则不用重新加载
     {
-        DestroyTraderAPI();
+        DestroyTraderAPI();   
         CreateTraderAPI();
         LoadTrader();
 
@@ -125,26 +125,26 @@ void CTPTradeGateWay::ReLoadTrader()
         strncpy(message.EventLog.Account, m_XTraderConfig.Account.c_str(), sizeof(message.EventLog.Account));
         strncpy(message.EventLog.Event, buffer, sizeof(message.EventLog.Event));
         strncpy(message.EventLog.UpdateTime, Utils::getCurrentTimeUs(), sizeof(message.EventLog.UpdateTime));
-        m_ReportMessageQueue.push(message);
-        m_Logger->Log->warn(buffer);
+        m_ReportMessageQueue.push(message);   /// 重连消息推入交易网关的回报队列，之后->traderengine回报队列->watcher->server->monitor
+        m_Logger->Log->warn(buffer);  /// 警告日志
     }
 }
 
 void CTPTradeGateWay::ReqUserLogin()
 {
-    CThostFtdcReqUserLoginField reqUserLogin;
+    CThostFtdcReqUserLoginField reqUserLogin;   /// ctp login struct
     memset(&reqUserLogin, 0, sizeof(reqUserLogin));
     strcpy(reqUserLogin.BrokerID, m_XTraderConfig.BrokerID.c_str());
     strcpy(reqUserLogin.UserID, m_XTraderConfig.Account.c_str());
     strcpy(reqUserLogin.Password, m_XTraderConfig.Password.c_str());
-    int ret = m_CTPTraderAPI->ReqUserLogin(&reqUserLogin, m_RequestID++);
+    int ret = m_CTPTraderAPI->ReqUserLogin(&reqUserLogin, m_RequestID++);   /// login 增加请求id
     std::string buffer = "CTPTrader:ReqUserLogin Account:" + m_XTraderConfig.Account;
-    HandleRetCode(ret, buffer);
+    HandleRetCode(ret, buffer);  /// 处理登陆请求的返回值
 }
 
 int CTPTradeGateWay::ReqQryFund()
 {
-    CThostFtdcQryTradingAccountField  reqQryTradingAccountField;
+    CThostFtdcQryTradingAccountField  reqQryTradingAccountField;   /// ctp tradingaccount struct 查询账户资金
     memset(&reqQryTradingAccountField, 0, sizeof(reqQryTradingAccountField));
     strcpy(reqQryTradingAccountField.BrokerID, m_XTraderConfig.BrokerID.c_str());
     strcpy(reqQryTradingAccountField.InvestorID, m_XTraderConfig.Account.c_str());
@@ -198,8 +198,8 @@ int CTPTradeGateWay::ReqQryTickerRate()
     CThostFtdcQryInstrumentMarginRateField MarginRateField;
     strncpy(MarginRateField.BrokerID, m_XTraderConfig.BrokerID.c_str(), sizeof(MarginRateField.BrokerID));
     strncpy(MarginRateField.InvestorID, m_XTraderConfig.Account.c_str(), sizeof(MarginRateField.InvestorID));
-    MarginRateField.HedgeFlag = THOST_FTDC_HF_Speculation;
-    for(int i = 0; i < m_TickerPropertyList.size(); i++)
+    MarginRateField.HedgeFlag = THOST_FTDC_HF_Speculation;  /// 投机套保标志设为投机
+    for(int i = 0; i < m_TickerPropertyList.size(); i++)   /// 每个合约单独查询
     {
         std::string Ticker = m_TickerPropertyList.at(i).Ticker;
         strncpy(MarginRateField.InstrumentID, Ticker.c_str(), sizeof(MarginRateField.InstrumentID));
@@ -209,7 +209,7 @@ int CTPTradeGateWay::ReqQryTickerRate()
         HandleRetCode(ret, buffer);
         usleep(1000*1000);
     }
-    // 查询保证金计算价格类型
+    // 查询保证金计算价格类型，昨仓都用昨结算价，今仓可能用昨结算价、开仓价等
     CThostFtdcQryBrokerTradingParamsField BrokerTradingParamsField;
     strncpy(BrokerTradingParamsField.BrokerID, m_XTraderConfig.BrokerID.c_str(), sizeof(BrokerTradingParamsField.BrokerID));
     strncpy(BrokerTradingParamsField.InvestorID, m_XTraderConfig.Account.c_str(), sizeof(BrokerTradingParamsField.InvestorID));
@@ -217,7 +217,7 @@ int CTPTradeGateWay::ReqQryTickerRate()
     buffer = "CTPTrader:ReqQryBrokerTradingParams Account:" + m_XTraderConfig.Account;
     HandleRetCode(ret, buffer);
     usleep(1000*1000);
-    // 查询合约单向大边
+    // 查询合约单向大边即保证金多个合约一起计算
     CThostFtdcQryInstrumentField InstrumentField;
     for(int i = 0; i < m_TickerPropertyList.size(); i++)
     {
@@ -259,7 +259,7 @@ int CTPTradeGateWay::ReqQryTickerRate()
     return 0;
 }
 
-void CTPTradeGateWay::ReqInsertOrder(const Message::TOrderRequest& request)
+void CTPTradeGateWay::ReqInsertOrder(const Message::TOrderRequest& request)   ///报单请求
 {
     CThostFtdcInputOrderField  reqOrderField;
     memset(&reqOrderField, 0, sizeof(reqOrderField));
@@ -269,13 +269,13 @@ void CTPTradeGateWay::ReqInsertOrder(const Message::TOrderRequest& request)
     strcpy(reqOrderField.ExchangeID, request.ExchangeID);
     strcpy(reqOrderField.UserID, m_UserID.c_str());
     char secBuffer[32] = {0};
-    int orderID = Utils::getCurrentTodaySec() * 10000 + m_RequestID++;
+    int orderID = Utils::getCurrentTodaySec() * 10000 + m_RequestID++;   ///生成唯一的orderRef
     sprintf(secBuffer, "%09d", orderID);
     strcpy(reqOrderField.OrderRef, secBuffer);
-    reqOrderField.OrderPriceType = THOST_FTDC_OPT_LimitPrice;//限价
+    reqOrderField.OrderPriceType = THOST_FTDC_OPT_LimitPrice;     ///限价
     if(Message::EOrderDirection::EBUY == request.Direction)
     {
-        reqOrderField.Direction = THOST_FTDC_D_Buy;
+        reqOrderField.Direction = THOST_FTDC_D_Buy;   /// 方向是buy
     }
     else
     {
@@ -283,7 +283,7 @@ void CTPTradeGateWay::ReqInsertOrder(const Message::TOrderRequest& request)
     }
     if(Message::EOrderOffset::EOPEN == request.Offset)
     {
-        reqOrderField.CombOffsetFlag[0] = THOST_FTDC_OF_Open;
+        reqOrderField.CombOffsetFlag[0] = THOST_FTDC_OF_Open;   ///表示开仓
     }
     else if(Message::EOrderOffset::ECLOSE == request.Offset)
     {
@@ -291,72 +291,72 @@ void CTPTradeGateWay::ReqInsertOrder(const Message::TOrderRequest& request)
     }
     else if(Message::EOrderOffset::ECLOSE_TODAY == request.Offset)
     {
-        reqOrderField.CombOffsetFlag[0] = THOST_FTDC_OF_CloseToday;
+        reqOrderField.CombOffsetFlag[0] = THOST_FTDC_OF_CloseToday;   ///平今仓
     }
     else if(Message::EOrderOffset::ECLOSE_YESTODAY == request.Offset)
     {
-        reqOrderField.CombOffsetFlag[0] = THOST_FTDC_OF_CloseYesterday;//
+        reqOrderField.CombOffsetFlag[0] = THOST_FTDC_OF_CloseYesterday;  ///平昨仓
     }
 
-    reqOrderField.CombHedgeFlag[0] = THOST_FTDC_HF_Speculation;//投机
-    reqOrderField.LimitPrice = request.Price;
-    reqOrderField.VolumeTotalOriginal = request.Volume;
+    reqOrderField.CombHedgeFlag[0] = THOST_FTDC_HF_Speculation;    ///投机
+    reqOrderField.LimitPrice = request.Price;   ///报单价格
+    reqOrderField.VolumeTotalOriginal = request.Volume;   ///报单手数
     // reqOrderField.MinVolume = 1;
-    reqOrderField.ContingentCondition = THOST_FTDC_CC_Immediately;
+    reqOrderField.ContingentCondition = THOST_FTDC_CC_Immediately;   ///触发条件为立即触发
     reqOrderField.StopPrice = 0;
     reqOrderField.ForceCloseReason = THOST_FTDC_FCC_NotForceClose;
     reqOrderField.IsAutoSuspend = 0;
-    reqOrderField.RequestID = request.OrderToken;
+    reqOrderField.RequestID = request.OrderToken;   ///用来标识这个订单
 
-    if(Message::EOrderType::EFOK == request.OrderType)
+    if(Message::EOrderType::EFOK == request.OrderType)   /// 订单类型为FILL OR KILL，立即成交或者取消
     {
-        reqOrderField.TimeCondition = THOST_FTDC_TC_IOC;
-        reqOrderField.VolumeCondition = THOST_FTDC_VC_CV;
+        reqOrderField.TimeCondition = THOST_FTDC_TC_IOC;    /// immediate or cancle  
+        reqOrderField.VolumeCondition = THOST_FTDC_VC_CV;   /// complete volume
     }
-    else if (Message::EOrderType::EFAK == request.OrderType)
+    else if (Message::EOrderType::EFAK == request.OrderType)    /// 订单类型为FILL AND KILL，立即成交并撤销剩余订单
     {
-        reqOrderField.TimeCondition = THOST_FTDC_TC_IOC;
-        reqOrderField.VolumeCondition = THOST_FTDC_VC_AV;
+        reqOrderField.TimeCondition = THOST_FTDC_TC_IOC;    /// immediate or cancle  
+        reqOrderField.VolumeCondition = THOST_FTDC_VC_AV;     /// any volume 
     }
-    else if (Message::EOrderType::ELIMIT == request.OrderType)
+    else if (Message::EOrderType::ELIMIT == request.OrderType)   /// 订单类型为限价单
     {
-        reqOrderField.TimeCondition = THOST_FTDC_TC_GFD;
-        reqOrderField.VolumeCondition = THOST_FTDC_VC_AV;
+        reqOrderField.TimeCondition = THOST_FTDC_TC_GFD;   /// 当日有效
+        reqOrderField.VolumeCondition = THOST_FTDC_VC_AV;  /// any volume 
     }
     // Order Status
-    Message::TOrderStatus& OrderStatus = m_OrderStatusMap[reqOrderField.OrderRef];
-    OrderStatus.BussinessType = m_XTraderConfig.BussinessType;
-    strncpy(OrderStatus.Product, m_XTraderConfig.Product.c_str(), sizeof(OrderStatus.Product));
-    strncpy(OrderStatus.Broker, m_XTraderConfig.Broker.c_str(), sizeof(OrderStatus.Broker));
-    strncpy(OrderStatus.Account, reqOrderField.InvestorID, sizeof(OrderStatus.Account));
-    strncpy(OrderStatus.ExchangeID, request.ExchangeID, sizeof(OrderStatus.ExchangeID));
-    strncpy(OrderStatus.Ticker, reqOrderField.InstrumentID, sizeof(OrderStatus.Ticker));
-    strncpy(OrderStatus.OrderRef, reqOrderField.OrderRef, sizeof(OrderStatus.OrderRef));
-    strncpy(OrderStatus.RiskID, request.RiskID, sizeof(OrderStatus.RiskID));
-    OrderStatus.SendPrice = reqOrderField.LimitPrice;
-    OrderStatus.SendVolume = reqOrderField.VolumeTotalOriginal;
-    OrderStatus.OrderType = request.OrderType;
-    OrderStatus.OrderToken = request.OrderToken;
-    OrderStatus.EngineID = request.EngineID;
-    std::string Account = reqOrderField.InvestorID;
-    std::string Ticker = reqOrderField.InstrumentID;
-    std::string Key = Account + ":" + Ticker;
-    OrderStatus.OrderSide = OrderSide(reqOrderField.Direction, reqOrderField.CombOffsetFlag[0], Key);
-    strncpy(OrderStatus.SendTime, request.SendTime, sizeof(OrderStatus.SendTime));
-    strncpy(OrderStatus.InsertTime, Utils::getCurrentTimeUs(), sizeof(OrderStatus.InsertTime));
-    strncpy(OrderStatus.RecvMarketTime, request.RecvMarketTime, sizeof(OrderStatus.RecvMarketTime));
-    OrderStatus.OrderStatus = Message::EOrderStatus::EORDER_SENDED;
-    PrintOrderStatus(OrderStatus, "CTPTrader::ReqInsertOrder ");
+    Message::TOrderStatus& OrderStatus = m_OrderStatusMap[reqOrderField.OrderRef];   /// 建立订单及订单状态映射
+    OrderStatus.BussinessType = m_XTraderConfig.BussinessType;   /// 交易类型为期货
+    strncpy(OrderStatus.Product, m_XTraderConfig.Product.c_str(), sizeof(OrderStatus.Product));   /// 交易的产品
+    strncpy(OrderStatus.Broker, m_XTraderConfig.Broker.c_str(), sizeof(OrderStatus.Broker));   /// 交易代理
+    strncpy(OrderStatus.Account, reqOrderField.InvestorID, sizeof(OrderStatus.Account));   ///交易账号
+    strncpy(OrderStatus.ExchangeID, request.ExchangeID, sizeof(OrderStatus.ExchangeID));   ///交易所id
+    strncpy(OrderStatus.Ticker, reqOrderField.InstrumentID, sizeof(OrderStatus.Ticker));   ///合约id
+    strncpy(OrderStatus.OrderRef, reqOrderField.OrderRef, sizeof(OrderStatus.OrderRef));   ///订单唯一标识
+    strncpy(OrderStatus.RiskID, request.RiskID, sizeof(OrderStatus.RiskID));               ///风控检查id
+    OrderStatus.SendPrice = reqOrderField.LimitPrice;                                      ///订单价格
+    OrderStatus.SendVolume = reqOrderField.VolumeTotalOriginal;                            ///订单手数
+    OrderStatus.OrderType = request.OrderType;                                             ///订单类型
+    OrderStatus.OrderToken = request.OrderToken;                                           ///订单编码
+    OrderStatus.EngineID = request.EngineID;                                               ///交易引擎id
+    std::string Account = reqOrderField.InvestorID;                                        ///账户
+    std::string Ticker = reqOrderField.InstrumentID;                                       ///合约id
+    std::string Key = Account + ":" + Ticker;                                              ///用来标识账户和合约
+    OrderStatus.OrderSide = OrderSide(reqOrderField.Direction, reqOrderField.CombOffsetFlag[0], Key); ///订单方向
+    strncpy(OrderStatus.SendTime, request.SendTime, sizeof(OrderStatus.SendTime));                    ///订单发送时间
+    strncpy(OrderStatus.InsertTime, Utils::getCurrentTimeUs(), sizeof(OrderStatus.InsertTime));       ///报单时间
+    strncpy(OrderStatus.RecvMarketTime, request.RecvMarketTime, sizeof(OrderStatus.RecvMarketTime));  ///行情收取时间
+    OrderStatus.OrderStatus = Message::EOrderStatus::EORDER_SENDED;                                   ///订单状态为订单发送
+    PrintOrderStatus(OrderStatus, "CTPTrader::ReqInsertOrder ");                                      ///订单状态输出日志
     
-    int ret = m_CTPTraderAPI->ReqOrderInsert(&reqOrderField, m_RequestID);
+    int ret = m_CTPTraderAPI->ReqOrderInsert(&reqOrderField, m_RequestID);                            ///执行报单
     std::string op = std::string("CTPTrader:ReqOrderInsert Account:") + request.Account + " Ticker:"
                      + request.Ticker + " OrderRef:" + reqOrderField.OrderRef;
     HandleRetCode(ret, op);
-    if(0 == ret)
+    if(0 == ret)   ///报单成功
     {
         Message::TAccountPosition& AccountPosition = m_TickerAccountPositionMap[Key];
-        UpdatePosition(OrderStatus, AccountPosition);
-        UpdateOrderStatus(OrderStatus);
+        UpdatePosition(OrderStatus, AccountPosition);   /// 更新仓位信息
+        UpdateOrderStatus(OrderStatus);   /// push进入m_ReportMessageQueue
         m_Logger->Log->debug("CTPTrader:ReqInsertOrder, InvestorID:{} ExchangeID:{} Ticker:{} UserID:{} OrderPriceType:{} Direction:{}\n\
                               \t\t\t\t\t\tCombOffsetFlag:{} CombHedgeFlag:{} LimitPrice:{} VolumeTotalOriginal:{} MinVolume:{} ContingentCondition:{} StopPrice:{}\n\
                               \t\t\t\t\t\tForceCloseReason:{} IsAutoSuspend:{} TimeCondition:{} VolumeCondition:{} RequestID:{}",
@@ -368,11 +368,11 @@ void CTPTradeGateWay::ReqInsertOrder(const Message::TOrderRequest& request)
     }
     else
     {
-        m_OrderStatusMap.erase(reqOrderField.OrderRef);
+        m_OrderStatusMap.erase(reqOrderField.OrderRef);   ///报单未成功就删除报单
     }
 }
 
-void CTPTradeGateWay::ReqInsertOrderRejected(const Message::TOrderRequest& request)
+void CTPTradeGateWay::ReqInsertOrderRejected(const Message::TOrderRequest& request)   ///报单被拒绝
 {
     CThostFtdcInputOrderField  reqOrderField;
     char OrderRef[32] = {0};
@@ -425,24 +425,24 @@ void CTPTradeGateWay::ReqInsertOrderRejected(const Message::TOrderRequest& reque
     strncpy(OrderStatus.SendTime, request.SendTime, sizeof(OrderStatus.SendTime));
     strncpy(OrderStatus.InsertTime, Utils::getCurrentTimeUs(), sizeof(OrderStatus.InsertTime));
     strncpy(OrderStatus.RecvMarketTime, request.RecvMarketTime, sizeof(OrderStatus.RecvMarketTime));
-    if(Message::ERiskStatusType::ECHECK_INIT == request.RiskStatus)
+    if(Message::ERiskStatusType::ECHECK_INIT == request.RiskStatus)   ///如果是风控初始化报文
     {
         OrderStatus.OrderStatus = Message::EOrderStatus::ERISK_CHECK_INIT;
     }
     else
     {
-        OrderStatus.OrderStatus = Message::EOrderStatus::ERISK_ORDER_REJECTED;
+        OrderStatus.OrderStatus = Message::EOrderStatus::ERISK_ORDER_REJECTED;   ///订单状态变为风控拒绝
     }
-    OrderStatus.ErrorID = request.ErrorID;
+    OrderStatus.ErrorID = request.ErrorID;   ///拒绝id
     strncpy(OrderStatus.ErrorMsg, request.ErrorMsg, sizeof(OrderStatus.ErrorMsg));
     PrintOrderStatus(OrderStatus, "CTPTrader::ReqInsertOrderRejected ");
     UpdateOrderStatus(OrderStatus);
 }
 
-void CTPTradeGateWay::ReqCancelOrder(const Message::TActionRequest& request)
+void CTPTradeGateWay::ReqCancelOrder(const Message::TActionRequest& request)   /// 撤单请求
 {
     auto it = m_OrderStatusMap.find(request.OrderRef);
-    if(it == m_OrderStatusMap.end())
+    if(it == m_OrderStatusMap.end())   ///没找到
     {
         m_Logger->Log->warn("CTPTrader::ReqCancelOrder Account:{} OrderRef:{} not found.", request.Account, request.OrderRef);
         return ;
@@ -455,7 +455,7 @@ void CTPTradeGateWay::ReqCancelOrder(const Message::TActionRequest& request)
     strcpy(reqOrderField.UserID, m_UserID.c_str());
     strcpy(reqOrderField.ExchangeID, OrderStatus.ExchangeID);
     reqOrderField.ActionFlag = THOST_FTDC_AF_Delete;
-    strcpy(reqOrderField.OrderSysID, OrderStatus.OrderSysID);
+    strcpy(reqOrderField.OrderSysID, OrderStatus.OrderSysID);   ///交易所回传的sysid
     strcpy(reqOrderField.OrderRef, OrderStatus.OrderRef);
     reqOrderField.OrderActionRef = Utils::getCurrentTodaySec() * 10000 + m_RequestID++;
 
@@ -471,7 +471,7 @@ void CTPTradeGateWay::ReqCancelOrder(const Message::TActionRequest& request)
     PrintOrderStatus(OrderStatus, "CTPTrader::ReqCancelOrder ");
 }
 
-void CTPTradeGateWay::ReqCancelOrderRejected(const Message::TActionRequest& request)
+void CTPTradeGateWay::ReqCancelOrderRejected(const Message::TActionRequest& request)   /// 撤单被拒绝
 {
     auto it = m_OrderStatusMap.find(request.OrderRef);
     if(it == m_OrderStatusMap.end())
@@ -487,7 +487,7 @@ void CTPTradeGateWay::ReqCancelOrderRejected(const Message::TActionRequest& requ
     PrintOrderStatus(OrderStatus, "CTPTrader::ReqCancelOrderRejected ");
 }
 
-void CTPTradeGateWay::ReqAuthenticate()
+void CTPTradeGateWay::ReqAuthenticate()  /// 请求柜台认证
 {
     CThostFtdcReqAuthenticateField reqAuthenticateField;
     memset(&reqAuthenticateField, 0, sizeof(reqAuthenticateField));
@@ -500,7 +500,7 @@ void CTPTradeGateWay::ReqAuthenticate()
     HandleRetCode(ret, buffer);
 }
 
-void CTPTradeGateWay::ReqSettlementInfoConfirm()
+void CTPTradeGateWay::ReqSettlementInfoConfirm()   ///请求结算确认
 {
     CThostFtdcSettlementInfoConfirmField confirm;
     memset(&confirm, 0, sizeof(confirm));
@@ -511,7 +511,7 @@ void CTPTradeGateWay::ReqSettlementInfoConfirm()
     HandleRetCode(ret, buffer);
 }
 
-void CTPTradeGateWay::HandleRetCode(int code, const std::string& op)
+void CTPTradeGateWay::HandleRetCode(int code, const std::string& op)   ///处理返回码
 {
     std::string Account = m_XTraderConfig.Account;
     std::string errorString = Account + " ";
@@ -538,7 +538,7 @@ void CTPTradeGateWay::HandleRetCode(int code, const std::string& op)
         m_Logger->Log->warn(errorString.c_str());
         break;
     }
-    // 错误发送监控EventLog
+    // 错误发送监控EventLog到monitor
     if(0 == code)
         return ;
     Message::PackMessage message;
@@ -554,46 +554,46 @@ void CTPTradeGateWay::HandleRetCode(int code, const std::string& op)
     m_ReportMessageQueue.push(message);
 }
 
-int CTPTradeGateWay::OrderSide(char direction, char offset, const std::string& Key)
+int CTPTradeGateWay::OrderSide(char direction, char offset, const std::string& Key)  /// 订单方向
 {
     int side = -1;
     Message::TAccountPosition& position = m_TickerAccountPositionMap[Key];
     if(THOST_FTDC_D_Buy == direction && THOST_FTDC_OF_Open == offset)
     {
-        side = Message::EOrderSide::EOPEN_LONG;
+        side = Message::EOrderSide::EOPEN_LONG; ///开多
     }
     else if(THOST_FTDC_D_Sell == direction && THOST_FTDC_OF_CloseToday == offset)
     {
-        side = Message::EOrderSide::ECLOSE_TD_LONG;
+        side = Message::EOrderSide::ECLOSE_TD_LONG; ///平今多
     }
     else if(THOST_FTDC_D_Sell == direction && THOST_FTDC_OF_CloseYesterday == offset)
     {
-        side = Message::EOrderSide::ECLOSE_YD_LONG;
+        side = Message::EOrderSide::ECLOSE_YD_LONG; ///平昨多
     }
     if(THOST_FTDC_D_Sell == direction && THOST_FTDC_OF_Open == offset)
     {
-        side = Message::EOrderSide::EOPEN_SHORT;
+        side = Message::EOrderSide::EOPEN_SHORT; ///开空
     }
     else if(THOST_FTDC_D_Buy == direction && THOST_FTDC_OF_CloseToday == offset)
     {
-        side = Message::EOrderSide::ECLOSE_TD_SHORT;
+        side = Message::EOrderSide::ECLOSE_TD_SHORT;///平今空
     }
     else if(THOST_FTDC_D_Buy == direction && THOST_FTDC_OF_CloseYesterday == offset)
     {
-        side = Message::EOrderSide::ECLOSE_YD_SHORT;
+        side = Message::EOrderSide::ECLOSE_YD_SHORT;///平昨空
     }
     else if(THOST_FTDC_D_Buy == direction && THOST_FTDC_OF_Close == offset)
     {
         if(position.FuturePosition.ShortTdVolume > 0)
         {
-            side = Message::EOrderSide::ECLOSE_TD_SHORT;
+            side = Message::EOrderSide::ECLOSE_TD_SHORT;///中金所与上期所区别
         }
         else
         {
             side = Message::EOrderSide::ECLOSE_YD_SHORT;
         }
     }
-    else if(THOST_FTDC_D_Sell == direction && THOST_FTDC_OF_Close == offset)
+    else if(THOST_FTDC_D_Sell == direction && THOST_FTDC_OF_Close == offset) 
     {
         if(position.FuturePosition.LongTdVolume > 0)
         {
@@ -607,7 +607,7 @@ int CTPTradeGateWay::OrderSide(char direction, char offset, const std::string& K
     return side;
 }
 
-int CTPTradeGateWay::Ordertype(char timec, char volumec)
+int CTPTradeGateWay::Ordertype(char timec, char volumec) ///订单类型
 {
     int ret = 0;
     if(THOST_FTDC_TC_GFD == timec && THOST_FTDC_VC_AV == volumec)
@@ -625,7 +625,7 @@ int CTPTradeGateWay::Ordertype(char timec, char volumec)
     return ret;
 }
 
-bool CTPTradeGateWay::IsRspError(CThostFtdcRspInfoField *pRspInfo)
+bool CTPTradeGateWay::IsRspError(CThostFtdcRspInfoField *pRspInfo)  ///是否请求报错
 {
     return pRspInfo != NULL && pRspInfo->ErrorID > 0;
 }
@@ -654,7 +654,7 @@ void CTPTradeGateWay::OnFrontConnected()
 
 void CTPTradeGateWay::OnFrontDisconnected(int nReason)
 {
-    m_ConnectedStatus = Message::ELoginStatus::ELOGIN_FAILED;
+    m_ConnectedStatus = Message::ELoginStatus::ELOGIN_FAILED;  ///连接断开改变连接状态，影响reload
     std::string buffer;
     auto it = m_CodeErrorMap.find(nReason);
     if(it != m_CodeErrorMap.end())
@@ -804,7 +804,7 @@ void CTPTradeGateWay::OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirm
     char errorString[512] = {0};
     if(!IsRspError(pRspInfo) && pSettlementInfoConfirm != NULL)
     {
-        m_ConnectedStatus = Message::ELoginStatus::ELOGIN_SUCCESSED;
+        m_ConnectedStatus = Message::ELoginStatus::ELOGIN_SUCCESSED;  // 结算后置连接状态为登陆成功
         sprintf(errorString, "CTPTrader::OnRspSettlementInfoConfirm successed, BrokerID:%s Account:%s", 
                             pSettlementInfoConfirm->BrokerID, pSettlementInfoConfirm->InvestorID);
         m_Logger->Log->info(errorString);
@@ -828,7 +828,7 @@ void CTPTradeGateWay::OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirm
 
 void CTPTradeGateWay::OnRspOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
-    if(IsRspError(pRspInfo) && pInputOrder != NULL)
+    if(IsRspError(pRspInfo) && pInputOrder != NULL)  // 报单失败才会回调
     {
         char errorBuffer[512] = {0};
         Utils::CodeConvert(pRspInfo->ErrorMsg, sizeof(pRspInfo->ErrorMsg), errorBuffer,
@@ -861,7 +861,7 @@ void CTPTradeGateWay::OnErrRtnOrderInsert(CThostFtdcInputOrderField *pInputOrder
         {
             Message::TOrderStatus& OrderStatus = it1->second;
             strncpy(OrderStatus.BrokerACKTime, Utils::getCurrentTimeUs(), sizeof(OrderStatus.BrokerACKTime));
-            OrderStatus.OrderStatus = Message::EOrderStatus::EBROKER_ERROR;
+            OrderStatus.OrderStatus = Message::EOrderStatus::EBROKER_ERROR;  //交易柜台报错
             OrderStatus.CanceledVolume = OrderStatus.SendVolume;
             Utils::CodeConvert(pRspInfo->ErrorMsg, sizeof(pRspInfo->ErrorMsg), OrderStatus.ErrorMsg,
                             sizeof(OrderStatus.ErrorMsg), "gb2312", "utf-8");
@@ -869,7 +869,7 @@ void CTPTradeGateWay::OnErrRtnOrderInsert(CThostFtdcInputOrderField *pInputOrder
             std::string Key = std::string(OrderStatus.Account) + ":" + OrderStatus.Ticker;
             // Update Position
             Message::TAccountPosition& AccountPosition = m_TickerAccountPositionMap[Key];
-            UpdatePosition(OrderStatus, AccountPosition);
+            UpdatePosition(OrderStatus, AccountPosition);  //减少对应仓位
             UpdateOrderStatus(OrderStatus);
             {
                 char errorString[512] = {0};
@@ -1108,7 +1108,7 @@ void CTPTradeGateWay::OnRtnOrder(CThostFtdcOrderField *pOrder)
             if(THOST_FTDC_OST_Unknown == pOrder->OrderStatus)
             {
                 // Broker ACK
-                if(OrderSysID.empty())
+                if(OrderSysID.empty())  // broker处sysID未填充
                 {
                     strncpy(OrderStatus.OrderLocalID, pOrder->OrderLocalID, sizeof(OrderStatus.OrderLocalID));
                     strncpy(OrderStatus.BrokerACKTime, Utils::getCurrentTimeUs(), sizeof(OrderStatus.BrokerACKTime));
@@ -1140,7 +1140,7 @@ void CTPTradeGateWay::OnRtnOrder(CThostFtdcOrderField *pOrder)
                 if(pOrder->VolumeTraded > 0)
                 {
                     OrderStatus.OrderStatus = Message::EOrderStatus::EPARTTRADED_CANCELLED;
-                    OrderStatus.CanceledVolume = pOrder->VolumeTotalOriginal - pOrder->VolumeTraded;
+                    OrderStatus.CanceledVolume = pOrder->VolumeTotalOriginal - pOrder->VolumeTraded;  /// 计算得到取消了多少volume
                 }
                 else
                 {
@@ -1337,7 +1337,7 @@ void CTPTradeGateWay::OnRtnTrade(CThostFtdcTradeField *pTrade)
             {
                 OrderStatus.OrderStatus = Message::EOrderStatus::EPARTTRADED;
             }
-            UpdateOrderStatus(OrderStatus);
+            UpdateOrderStatus(OrderStatus); ///完全成交、部分成交在这里更新
             // Position Update
             UpdatePosition(OrderStatus, AccountPosition);
             // remove Order When AllTraded
@@ -1531,9 +1531,9 @@ void CTPTradeGateWay::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *
         std::string ExchangeID = pInvestorPosition->ExchangeID;
         if(THOST_FTDC_PD_Long == pInvestorPosition->PosiDirection)
         {
-            if(ExchangeID == "SHFE" || ExchangeID == "INE")
+            if(ExchangeID == "SHFE" || ExchangeID == "INE")  //上期所、上海能源中心
             {
-                if(pInvestorPosition->PositionDate == THOST_FTDC_PSD_Today)
+                if(pInvestorPosition->PositionDate == THOST_FTDC_PSD_Today)  //根据仓位日期区分
                 {
                     AccountPosition.FuturePosition.LongTdVolume = pInvestorPosition->Position;
                     AccountPosition.FuturePosition.LongOpenVolume = pInvestorPosition->OpenVolume;
@@ -1545,7 +1545,7 @@ void CTPTradeGateWay::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *
             }
             else
             {
-                AccountPosition.FuturePosition.LongTdVolume = pInvestorPosition->TodayPosition;
+                AccountPosition.FuturePosition.LongTdVolume = pInvestorPosition->TodayPosition;  //中金所不分平今仓和平昨仓，一旦开仓，就是今仓
                 // 昨仓 = 总持仓 - 今仓；
                 AccountPosition.FuturePosition.LongYdVolume = pInvestorPosition->Position - pInvestorPosition->TodayPosition;
                 AccountPosition.FuturePosition.LongOpenVolume = pInvestorPosition->OpenVolume;
@@ -1601,7 +1601,7 @@ void CTPTradeGateWay::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *
                                   m_XTraderConfig.BrokerID.c_str(), m_XTraderConfig.Account.c_str(),
                                   pRspInfo->ErrorID, errorBuffer);
     }
-    if(bIsLast)
+    if(bIsLast)  ///报文到最后
     {
         for (auto it = m_TickerAccountPositionMap.begin(); it != m_TickerAccountPositionMap.end(); it++)
         {

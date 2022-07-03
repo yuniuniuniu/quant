@@ -23,37 +23,37 @@ public:
     CTPTradeGateWay();
     virtual ~CTPTradeGateWay();
 public:
-    virtual void LoadAPIConfig();
-    virtual void GetCommitID(std::string& CommitID, std::string& UtilsCommitID);
-    virtual void GetAPIVersion(std::string& APIVersion);
-    virtual void CreateTraderAPI();
-    virtual void DestroyTraderAPI();
-    virtual void LoadTrader();
-    virtual void ReLoadTrader();
-    virtual void ReqUserLogin();
-    virtual int ReqQryFund();
-    virtual int ReqQryPoistion();
-    virtual int ReqQryOrder();
-    virtual int ReqQryTrade();
-    virtual int ReqQryTickerRate();
-    virtual void ReqInsertOrder(const Message::TOrderRequest& request);
-    virtual void ReqInsertOrderRejected(const Message::TOrderRequest& request);
-    virtual void ReqCancelOrder(const Message::TActionRequest& request);
-    virtual void ReqCancelOrderRejected(const Message::TActionRequest& request);
+    virtual void LoadAPIConfig();  ///加载和CTP相关的参数：error及前置机
+    virtual void GetCommitID(std::string& CommitID, std::string& UtilsCommitID);  ///获取git commitID
+    virtual void GetAPIVersion(std::string& APIVersion);   ///获取CTP版本
+    virtual void CreateTraderAPI();  ///创建CTP交易实例
+    virtual void DestroyTraderAPI();  ///摧毁CTP交易实例
+    virtual void LoadTrader();   ///订阅流、启动与CTP柜台通信
+    virtual void ReLoadTrader();   ///重新加载trader
+    virtual void ReqUserLogin();   ///登陆CTP柜台
+    virtual int ReqQryFund();   ///查询资金
+    virtual int ReqQryPoistion();   ///查询仓位
+    virtual int ReqQryOrder();   ///查询委托
+    virtual int ReqQryTrade();   ///查询成交
+    virtual int ReqQryTickerRate();   ///查询手续费率
+    virtual void ReqInsertOrder(const Message::TOrderRequest& request);   ///报单
+    virtual void ReqInsertOrderRejected(const Message::TOrderRequest& request);   ///处理报单被拒绝
+    virtual void ReqCancelOrder(const Message::TActionRequest& request);   ///撤单
+    virtual void ReqCancelOrderRejected(const Message::TActionRequest& request);   ///处理撤单被拒绝
 protected:
-    void ReqAuthenticate();
-    void ReqSettlementInfoConfirm();
-    void HandleRetCode(int code, const std::string& op);
-    int OrderSide(char direction, char offset, const std::string& Key);
-    int Ordertype(char timec, char volumec);
-    bool IsRspError(CThostFtdcRspInfoField *pRspInfo);
+    void ReqAuthenticate();   /// 请求认证
+    void ReqSettlementInfoConfirm();   /// 请求结算确认
+    void HandleRetCode(int code, const std::string& op);   ///处理返回码
+    int OrderSide(char direction, char offset, const std::string& Key);   ///获取对应order的交易方向
+    int Ordertype(char timec, char volumec);   /// 获取order的类型
+    bool IsRspError(CThostFtdcRspInfoField *pRspInfo);   /// 判断是否请求错误
 private:
-    CThostFtdcTraderApi* m_CTPTraderAPI;
-    Utils::CTPConfig m_CTPConfig;
-    int m_RequestID;
-    std::string m_UserID;
-    int m_FrontID;
-    int m_SessionID;
+    CThostFtdcTraderApi* m_CTPTraderAPI;   /// 交易实例
+    Utils::CTPConfig m_CTPConfig;   /// 和CTP相关的参数
+    int m_RequestID;   /// 递增的请求id，配合时间戳生成orderef
+    std::string m_UserID;  // 返回的用户id
+    int m_FrontID;  // 选择的前置机id
+    int m_SessionID;  // 会话id
 protected:
     /*********************************************************************
     * CTP API响应回调函数
