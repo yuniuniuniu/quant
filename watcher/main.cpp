@@ -14,7 +14,7 @@ void printHelp()
 
 int main(int argc, char *argv[])
 {
-    std::string configPath = "./config.yml";
+    std::string configPath = "/root/quant/watcher/XWatcher.yml";
     int ch;
     bool debug = false;
     while ((ch = getopt(argc, argv, "f:a:dh")) != -1)
