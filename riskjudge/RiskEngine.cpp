@@ -98,7 +98,7 @@ void RiskEngine::HandleRequestFunc()
         bool ret = m_HPPackServer->m_RequestMessageQueue.pop(message);
         if(ret)
         {
-            HandleRequest(message);
+            HandleRequest(message);    /// 报单撤单请求
         }
         memset(&message, 0, sizeof(message));
         ret = m_HPPackClient->m_PackMessageQueue.pop(message);
@@ -106,7 +106,7 @@ void RiskEngine::HandleRequestFunc()
         {
             if(message.MessageType == Message::EMessageType::ECommand)
             {
-                HandleCommand(message);
+                HandleCommand(message);   /// 风控参数更新命令
             }
         }
     }
@@ -146,17 +146,17 @@ void RiskEngine::HandleRequest(Message::PackMessage& msg)
     switch (msg.MessageType)
     {
     case Message::EMessageType::EOrderRequest:
-        HandleOrderRequest(msg);
+        HandleOrderRequest(msg);  // 处理报单
         break;
     case Message::EMessageType::EActionRequest:
-        HandleActionRequest(msg);
+        HandleActionRequest(msg);  // 处理撤单
         break;
     case Message::EMessageType::EOrderStatus:
-        HandleOrderStatus(msg);
+        HandleOrderStatus(msg);  // 根据订单状态更新表
         break;
     case Message::EMessageType::ELoginRequest:
         break;
-    case Message::EMessageType::EEventLog:
+    case Message::EMessageType::EEventLog:  // 事件日志
         m_HPPackClient->SendData((const unsigned char*)&msg, sizeof(msg));
         break;
     default:
@@ -171,7 +171,7 @@ void RiskEngine::HandleResponse(const Message::PackMessage& msg)
 {
     switch (msg.MessageType)
     {
-    case Message::EMessageType::EOrderRequest:
+    case Message::EMessageType::EOrderRequest:  /// 发送给trader
     {
         for (auto it = m_HPPackServer->m_sConnections.begin(); it != m_HPPackServer->m_sConnections.end(); it++)
         {
@@ -183,7 +183,7 @@ void RiskEngine::HandleResponse(const Message::PackMessage& msg)
         }
         break;
     }
-    case Message::EMessageType::EActionRequest:
+    case Message::EMessageType::EActionRequest:   ///发送给trader
     {
         for (auto it = m_HPPackServer->m_sConnections.begin(); it != m_HPPackServer->m_sConnections.end(); it++)
         {
@@ -195,7 +195,7 @@ void RiskEngine::HandleResponse(const Message::PackMessage& msg)
         }
         break;
     }
-    case Message::EMessageType::ERiskReport:
+    case Message::EMessageType::ERiskReport:   ///风控报告发送给watcher
         m_HPPackClient->SendData((const unsigned char*)&msg, sizeof(msg));
         break;
     default:
@@ -291,7 +291,7 @@ void RiskEngine::HandleOrderStatus(const Message::PackMessage& msg)
         bool cancelled = Message::EOrderStatus::EPARTTRADED_CANCELLED == OrderStatus.OrderStatus ||
                          Message::EOrderStatus::ECANCELLED == OrderStatus.OrderStatus ||
                          Message::EOrderStatus::EEXCHANGE_ERROR == OrderStatus.OrderStatus;
-        if(OrderStatus.OrderType == Message::EOrderType::ELIMIT && cancelled)
+        if(OrderStatus.OrderType == Message::EOrderType::ELIMIT && cancelled)  // FAK FOK撤单不算在里面
         {
             std::string Account = OrderStatus.Account;
             std::string Ticker = OrderStatus.Ticker;
