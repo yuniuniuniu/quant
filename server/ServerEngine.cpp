@@ -8,7 +8,7 @@ std::unordered_map<std::string, Message::TAppStatus> ServerEngine::m_AppStatusMa
 ServerEngine::ServerEngine()
 {
     m_HPPackServer = NULL;
-    m_UserDBManager = Utils::Singleton<UserDBManager>::GetInstance();
+    m_UserDBManager = Utils::Singleton<UserDBManager>::GetInstance();  ///获取数据库实例
 }
 
 void ServerEngine::LoadConfig(const char* yml)
@@ -70,7 +70,7 @@ void ServerEngine::Run()
             for (size_t i = 0; i < items.size(); i++)
             {
                 memcpy(&m_PackMessage, &items.at(i), sizeof(m_PackMessage));
-                HandleSnapShotMessage(m_PackMessage);
+                HandleSnapShotMessage(m_PackMessage);  ///将消息写入lastmap及对应的queue
             }
         }
         else
@@ -88,7 +88,7 @@ void ServerEngine::Run()
         {
             if(m_XServerConfig.SnapShot && IsTrading())
             {
-                int retCode = Utils::SnapShotHelper<Message::PackMessage>::WriteData(m_SnapShotPath, m_PackMessage);
+                int retCode = Utils::SnapShotHelper<Message::PackMessage>::WriteData(m_SnapShotPath, m_PackMessage);  /// 写快照
                 Utils::gLogger->Log->debug("ServerEngine::SnapShotHelper::WriteData result:{}", retCode);
             }
             HandlePackMessage(m_PackMessage);
@@ -162,13 +162,13 @@ void ServerEngine::HandleLoginRequest(const Message::PackMessage &msg)
     auto it = m_UserPermissionMap.find(Account);
     if(m_UserPermissionMap.end() != it)
     {
-        std::string Plugins = it->second.Plugins;
+        std::string Plugins = it->second.Plugins;  ///用户的插件权限
         std::string errorString;
         for (auto it1 = m_HPPackServer->m_sConnections.begin(); it1 != m_HPPackServer->m_sConnections.end(); ++it1)
         {
             if (Utils::equalWith(Account, it1->second.Account))
             {
-                if (Utils::equalWith(msg.LoginRequest.PassWord, it->second.PassWord))
+                if (Utils::equalWith(msg.LoginRequest.PassWord, it->second.PassWord))   /// 密码匹配
                 {
                     it->second.ErrorID = 0;
                     strncpy(it->second.ErrorMsg, "Login Successed.", sizeof(it->second.ErrorMsg));
@@ -176,7 +176,7 @@ void ServerEngine::HandleLoginRequest(const Message::PackMessage &msg)
                 else
                 {
                     {
-                        // send LoginResponse
+                        // send LoginResponse   密码不匹配  一条响应、一条事件日志
                         Message::PackMessage message;
                         memset(&message, 0, sizeof(message));
                         message.MessageType = Message::EMessageType::ELoginResponse;
@@ -208,19 +208,19 @@ void ServerEngine::HandleLoginRequest(const Message::PackMessage &msg)
                         {
                             Plugins += "|";
                         }
-                        Plugins += PLUGIN_PERMISSION;
+                        Plugins += PLUGIN_PERMISSION;  /// 超级用户赋予权限
                     }
                 }
                 strncpy(it->second.Plugins, Plugins.c_str(), sizeof(it->second.Plugins));
                 strncpy(it1->second.Plugins, Plugins.c_str(), sizeof(it1->second.Plugins));
                 strncpy(it1->second.Messages, it->second.Messages, sizeof(it1->second.Messages));
                 // add new connection
-                m_HPPackServer->m_newConnections.insert(std::pair<HP_CONNID, Connection>(it1->second.dwConnID, it1->second));
+                m_HPPackServer->m_newConnections.insert(std::pair<HP_CONNID, Connection>(it1->second.dwConnID, it1->second));   /// 数据回放后清空
                 {
                     // send LoginResponse
                     Message::PackMessage message;
                     memset(&message, 0, sizeof(message));
-                    message.MessageType = Message::EMessageType::ELoginResponse;
+                    message.MessageType = Message::EMessageType::ELoginResponse;  /// 登陆成功响应报文
                     memcpy(&message.LoginResponse, &it->second, sizeof(message.LoginResponse));
                     m_HPPackServer->SendData(it1->second.dwConnID, (const unsigned char*)&message, sizeof(message));
                 }
@@ -272,7 +272,7 @@ void ServerEngine::HandleCommand(const Message::PackMessage &msg)
     {
         for (auto it = m_HPPackServer->m_sConnections.begin(); it != m_HPPackServer->m_sConnections.end(); ++it)
         {
-            std::string Colo = it->second.Colo;
+            std::string Colo = it->second.Colo;  /// 转发至对应的colo服务器
             if(Message::EClientType::EXWATCHER == it->second.ClientType && Colo == msg.Command.Colo)
             {
                 m_HPPackServer->SendData(it->second.dwConnID, (const unsigned char *)&msg, sizeof(msg));
@@ -888,6 +888,7 @@ void ServerEngine::HistoryDataReplay()
 
 void ServerEngine::LastHistoryDataReplay()
 {
+    // 每条新m_newConnections连接replay一次 to monitor
     // EventLog Replay
     for (int i = 0; i < m_EventgLogHistoryQueue.size(); i++)
     {
@@ -1037,7 +1038,7 @@ void ServerEngine::LastHistoryDataReplay()
     }
     std::mutex mtx;
     mtx.lock();
-    m_HPPackServer->m_newConnections.clear();
+    m_HPPackServer->m_newConnections.clear();  // newConnection回放完毕，清空
     mtx.unlock();
 }
 
