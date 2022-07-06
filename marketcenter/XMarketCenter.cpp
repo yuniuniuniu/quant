@@ -90,6 +90,7 @@ void XMarketCenter::PullMarketData()
 void XMarketCenter::HandleMarketData()
 {
     Utils::gLogger->Log->info("XMarketCenter::HandleMarketData start thread to handle Market Data.");
+    // 有多少tick就构建多少大小
     Utils::IPCMarketQueue<MarketData::TFutureMarketDataSet> MarketQueue(m_MarketCenterConfig.TotalTick, m_MarketCenterConfig.MarketChannelKey);
     // Init Market Queue
     {
@@ -104,7 +105,7 @@ void XMarketCenter::HandleMarketData()
     }
     while (true)
     {
-        // reload PackClient when timeout greater equals to 10s
+        // 如果断线了，client重连；没断线不重连
         static unsigned long prevtimestamp = Utils::getTimeMs();
         unsigned long currenttimestamp = Utils::getTimeMs();
         if(currenttimestamp - prevtimestamp >=  10 * 1000)
@@ -131,7 +132,7 @@ void XMarketCenter::HandleMarketData()
                 if (it != m_TickerExchangeMap.end())
                 {
                     future.TotalTick = m_MarketCenterConfig.TotalTick;
-                    Utils::CalculateTick(m_MarketCenterConfig, future);
+                    Utils::CalculateTick(m_MarketCenterConfig, future);    /// 计算该tick在内存数据队列中位置
                     MarketData::Check(future);
                     strncpy(future.ExchangeID, it->second.c_str(), sizeof(future.ExchangeID));
                 }
@@ -206,7 +207,7 @@ void XMarketCenter::HandleMarketData()
                 }
                 SectionLastTick += SectionTickCount;
             }
-            if(TickIndex == SectionLastTick && m_LastTick == SectionLastTick)
+            if(TickIndex == SectionLastTick && m_LastTick == SectionLastTick)  // 不在交易时段则不更新
                     continue;
             // send Market Data to XServer
             UpdateLastMarketData();

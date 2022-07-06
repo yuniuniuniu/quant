@@ -16,8 +16,8 @@ class CTPMarketGateWay : public CThostFtdcMdSpi, public MarketGateWay
 {
     friend class Utils::Singleton<CTPMarketGateWay>;
 public:
-    void StartMarketGateWay();
-    bool LoadConfig(const char *yml);
+    void StartMarketGateWay();          ///开启网关
+    bool LoadConfig(const char *yml);   ///加载所有配置文件
 public:
     /*********************************************************************************
      *  API callback implementation
@@ -51,17 +51,17 @@ private:
     void ParseMarketData(const CThostFtdcDepthMarketDataField& depthMarketData, MarketData::TFutureMarketData& tickData);
     void printDepthMarketData(const CThostFtdcDepthMarketDataField* pDepthMarketData);
 public:
-    static Utils::RingBuffer<MarketData::TFutureMarketData> m_FutureMarketDataQueue;
+    static Utils::RingBuffer<MarketData::TFutureMarketData> m_FutureMarketDataQueue;    /// 收取单个合约数据
 private:
     CTPMarketGateWay();
     CTPMarketGateWay &operator=(const CTPMarketGateWay &);
     CTPMarketGateWay(const CTPMarketGateWay &);
 private:
     MarketData::TFutureMarketData m_MarketData;
-    CThostFtdcMdApi *m_pMdUserApi;
-    Utils::CTPMarketSourceConfig m_CTPMarketSourceConfig;
-    std::unordered_set<std::string> m_TickerSet;
-    std::vector<Utils::TickerProperty> m_TickerPropertyVec;
+    CThostFtdcMdApi *m_pMdUserApi;                            ///行情实例
+    Utils::CTPMarketSourceConfig m_CTPMarketSourceConfig;     ///存放与ctp有关的参数
+    std::unordered_set<std::string> m_TickerSet;              ///存放合约列表
+    std::vector<Utils::TickerProperty> m_TickerPropertyVec;   ///存放合约相对位置、合约名、交易所名
 };
 
 #endif // CTPMARKETGATEWAY_H
