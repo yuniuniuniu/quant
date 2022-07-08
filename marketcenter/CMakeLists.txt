@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
-PROJECT(XMarketCenter)
-SET(AppVersion 0.3.0)
-SET(XMarketCenter_Version ${PROJECT_NAME}_${AppVersion})
+PROJECT(MarketCenter)
+SET(AppVersion 0.1.0)
+SET(MarketCenter_Version ${PROJECT_NAME}_${AppVersion})
 
 set(CMAKE_CXX_FLAGS "-fPIC")
 
@@ -14,7 +14,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET(CMAKE_BUILD_TYPE "RelWithDebInfo")
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(${CMAKE_SOURCE_DIR}/../Utils/)
+include_directories(${CMAKE_SOURCE_DIR}/../utils/)
 
 macro(Get_CommitID APP_COMMITID)   
     find_package(Git QUIET)     # 查找Git，QUIET静默方式不报错
@@ -37,7 +37,7 @@ macro(Get_UtilsCommitID GIT_UTILSCOMMITID)
         OUTPUT_VARIABLE ${GIT_UTILSCOMMITID}        # 输出字符串存入变量
         OUTPUT_STRIP_TRAILING_WHITESPACE    # 删除字符串尾的换行符
         ERROR_QUIET                         # 对执行错误静默
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Utils/ # 执行路径
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../utils/ # 执行路径
         )
     endif()
 endmacro() 
@@ -56,27 +56,27 @@ add_definitions(-DUTILS_COMMITID=\"${UTILS_COMMITID}\")
 add_definitions(-DAPI_VERSION=\"${APIVersion}\")
 
 # HP-Scoket
-include_directories(${CMAKE_SOURCE_DIR}/../XAPI/HP-Socket/5.8.2/include/)
-link_directories(${CMAKE_SOURCE_DIR}/../XAPI/HP-Socket/5.8.2/lib)
+include_directories(${CMAKE_SOURCE_DIR}/../api/HP-Socket/5.8.2/include/)
+link_directories(${CMAKE_SOURCE_DIR}/../api/HP-Socket/5.8.2/lib)
 
 # SPDLog
-include_directories(${CMAKE_SOURCE_DIR}/../XAPI/SPDLog/1.8.5/include/)
-link_directories(${CMAKE_SOURCE_DIR}/../XAPI/SPDLog/1.8.5/lib)
+include_directories(${CMAKE_SOURCE_DIR}/../api/SPDLog/1.8.5/include/)
+link_directories(${CMAKE_SOURCE_DIR}/../api/SPDLog/1.8.5/lib)
 
 # YAML-CPP
-include_directories(${CMAKE_SOURCE_DIR}/../XAPI/YAML-CPP/0.6.3/include/)
-link_directories(${CMAKE_SOURCE_DIR}/../XAPI/YAML-CPP/0.6.3/lib)
+include_directories(${CMAKE_SOURCE_DIR}/../api/YAML-CPP/0.6.3/include/)
+link_directories(${CMAKE_SOURCE_DIR}/../api/YAML-CPP/0.6.3/lib)
 
 # CTP 6.5.1
-include_directories(${CMAKE_SOURCE_DIR}/../XAPI/CTP/6.5.1/include)
-link_directories(${CMAKE_SOURCE_DIR}/../XAPI/CTP/6.5.1/lib)
+include_directories(${CMAKE_SOURCE_DIR}/../api/CTP/6.5.1/include)
+link_directories(${CMAKE_SOURCE_DIR}/../api/CTP/6.5.1/lib)
 
 set(SOURCES main.cpp 
             HPPackClient.cpp
             XMarketCenter.cpp 
             MarketGateWay/CTPMarketGateWay.cpp
-            ${CMAKE_SOURCE_DIR}/../Utils/Logger.cpp)
+            ${CMAKE_SOURCE_DIR}/../utils/Logger.cpp)
 
-add_executable(${XMarketCenter_Version} ${SOURCES})
+add_executable(${MarketCenter_Version} ${SOURCES})
 
-target_link_libraries(${XMarketCenter_Version} thostmduserapi_se yaml-cpp spdlog pthread hpsocket4c)  
+target_link_libraries(${MarketCenter_Version} thostmduserapi_se yaml-cpp spdlog pthread hpsocket4c)  
