@@ -61,7 +61,7 @@ namespace Utils
         bool Read(unsigned int index, T &value)
         {
             bool ret = false;
-            if (index < m_size && *m_writeIndex != index)
+            if (index  <  m_size && *m_writeIndex != index)
             {
                 memcpy(&value, &m_buffer[index], sizeof(value));
                 ret = true;
