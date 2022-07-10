@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<config>
-  <server_info ip="183.129.220.106" port="21001"/>
-  <enable_log status="1"/>
-  <clients rptr_time="300" reconnect_time="5">
-    <client app_id="client" auth_id="client_auth_code" login_id="3866259" password="1"/>
-  </clients>
-</config>
-  
