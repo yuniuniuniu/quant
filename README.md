@@ -60,11 +60,184 @@
 
 ## 模块简介：
 
-Utils：
+MarketCenter【与期货公司的行情网关交互】
+
+marketgateway
+
+1、加载参数->创建行情api：CreateFtdcMdApi->注册回调类：RegisterSpi(this)->设置前置地址:RegisterFront->开始连接:Init
+
+2、前置机连接的回调函数OnFrontConnected中发送登陆请求：ReqUserLogin
+
+3、登陆回调函数OnRspUserLogin中开始订阅行情SubscribeMarketData
+
+4、在回调函数OnRtnDepthMarketData中收取数据，push入自身数据网关的ring buffer中
 
 
 
-api:
+MarketCenter
+
+1、加载参数、建立tcp连接、初始化data logger、初始化对应marketgateway、初始化app状态、开启线程m_pMarketDataReceivedThread、m_pMarketDataHandleThread
+
+2、m_pMarketDataReceivedThread处理marketgateway做的事
+
+3、m_pMarketDataHandleThread中：
+
+- 创建共享内存数据队列MarketQueue，有多少个切片数据，就初始化多少共享内存【为集合竞价多分配一个】，并初始化其中切片数据的一些属性：ticker name
+- 进入循环，判断是否需断线重连
+  - CalculateTick计算收到的数据位于哪个切片，用MillSec判断，>=500则认为是1s的后一个切片，<500则认为是1s的后一个切片，使用UpdateTime的hour、minute、second计算切片所在位置。       data中lasttick及tick字段来判断该标的在这个事件切片是否有更新
+  - 检查收到的数据是否合法：price、receive time
+  - 当所有合约收取完时或者超时时，开始汇集形成dataset，以最新的合约数据所在切片index为last tick
+  - 在交易时段则发送data至monitor
+
+
+
+Watcher
+
+1、加载参数、开启hpserver、建立与SERVER的连接
+
+2、开启处理线程m_pWorkThread
+
+- 初始化app状态、进入循环、检查是否在交易时段
+- 从server的ringbuffer中pop出message进行处理，从client的ringbuffer中pop出message进行处理：HandlePackMessage
+  - HandleCommand处理monitor发送过来的风控命令、资金转入转出命令、启动开启各类app命令
+  - HandleOrderRequest将monitor发送发过来的下单发送给trader
+  - HandleActionRequest将monitor发送发过来的撤单发送给trader
+  - ForwardToXServer将event log、资金状态、仓位状态、风控报告、订单状态、app状态、tick数据发送至server
+- 固定时间更新所在服务器状态、进程状态，发送状态消息给monitor
+  - system及popen实现
+- 固定时间检查SERVER是否需要重连
+
+
+
+
+
+server
+
+1、加载参数、获取数据库实例、加载数据库、读取permission表及appstatus状态表、注册hpserver
+
+2、如果有快照，就先回放快照，HandleSnapShotMessage处理快照中的各个message，更新各个message对应的数据结构
+
+- m_EventgLogHistoryQueue:   eventlog
+- m_LastAccountFundMap、m_AccountPositionHistoryQueue：accountposition
+- m_OrderStatusHistoryQueue：OrderStatus
+- RiskReport
+  - m_LastTickerCancelRiskReportMap：ERISK_TICKER_CANCELLED
+  - m_LastLockedAccountRiskReportMap：ERISK_ACCOUNT_LOCKED
+  - m_LastRiskLimitRiskReportMap：ERISK_LIMIT
+- m_LastColoStatusMap、m_ColoStatusHistoryQueue：EColoStatus
+- m_LastAppStatusMap、m_AppStatusMap、m_AppStatusHistoryQueue：EAppStatus
+- m_FutureMarketDataHistoryQueue、m_LastFutureMarketDataMap：EFutureMarketData
+- m_StockMarketDataHistoryQueue、m_LastStockMarketDataMap：EStockMarketData
+
+3、进入循环，检查是否在交易时段，不断从server的ringbuffer中pop出message，写快照，进入HandlePackMessage处理message
+
+4、HandlePackMessage
+
+- ELoginRequest：HandleLoginRequest
+
+  - 如果登陆的client是monitor，那么进入处理函数
+  - 根据登陆请求的account字段在m_UserPermissionMap中寻找，如果找到，就在所有已有连接中寻找该账户的连接
+    - 密码不匹配，发送给该monitor连接一条ELoginResponse登陆失败响应报文、一条登陆失败的EEventLog事件日志
+    - 密码匹配，进入下一阶段
+  - 如果是root或者admin账户，赋予其所有PLUG_IN权限，更新对应connection、对应m_UserPermissionMap中账户的PLUG_IN权限、用m_UserPermissionMap中对应账户的消息数据权限Messages更新connections里的Messages
+  - 往m_newConnections中插入这条连接【这是用来数据回放用的】
+  - 发送给该monitor连接一条ELoginResponse登陆成功响应报文
+  - 如果是root或者admin账户，将m_UserPermissionMap中所有账户的value即TLoginResponse【包含账户权限、密码等信息】都发送给monitor
+
+- ECommand：HandleCommand
+
+  - EUPDATE_USERPERMISSION：调用UpdateUserPermissionTable
+    - 调用ParseUpdateUserPermissionCommand解析命令至sql，更新数据库
+    - 根据sql是insert、update、delete更新m_UserPermissionMap的operation字段，调用QueryUserPermission更新m_UserPermissionMap
+      - QueryUserPermission中判断如果是来自monitor的admin或root，则将m_UserPermissionMap中所有账户的value即TLoginResponse【包含账户权限、密码等信息】都发送给monitor
+  - EUPDATE_RISK_LIMIT、EUPDATE_RISK_ACCOUNT_LOCKED：转发至对应colo服务器上的watcher再转发至riskjudge，进行风控操作
+  - EKILL_APP、ESTART_APP：转发至对应colo服务器上的watcher，watcher对各app进行开启、关闭等操作
+  - ETRANSFER_FUND_IN、ETRANSFER_FUND_OUT、EREPAY_MARGIN_DIRECT：转发至对应colo上的watcher再转发至trader，调用创建的实例的api操作
+
+- EEventLog：HandleEventLog
+
+  - 如果在交易时段进入，Event Log进入m_EventgLogHistoryQueue
+  - 转发给有EEventLog消息权限的monitor
+
+- EAccountFund：HandleAccountFund
+
+  - 如果在交易时段进入，AccountFundMessage进入m_AccountFundHistoryQueue
+  - 更新m_LastAccountFundMap
+  - 转发给有MESSAGE_ACCOUNTFUND消息权限的monitor
+
+- EAccountPosition：HandleAccountPosition
+
+  - 如果在交易时段进入，AccountPositionMessage进入m_AccountPositionHistoryQueue
+  - 更新m_LastAccountPostionMap
+  - 转发给有MESSAGE_ACCOUNTPOSITION消息权限的monitor
+
+- EOrderStatus：HandleOrderStatus
+
+  - 如果在交易时段进入，OrderStatusMessage进入m_EventgLogHistoryQueue
+  - 转发给有MESSAGE_ORDERSTATUS消息权限的monitor
+
+- EOrderRequest：HandleOrderRequest
+
+  - 转发monitor的下单至对应colo服务器的watcher，再转发至trader
+
+- EActionRequest：HandleActionRequest
+
+  - 转发monitor的撤单至对应colo服务器的watcher，再转发至trader
+
+- ERiskReport：HandleRiskReport
+
+  - 如果在交易时段，RiskReportMessage推入m_RiskReportHistoryQueue
+  - 判断风控报告类型，依次进行处理
+    - ERISK_TICKER_CANCELLED：更新m_LastTickerCancelRiskReportMap
+    - ERISK_ACCOUNT_LOCKED：更新m_LastLockedAccountRiskReportMap
+    - ERISK_LIMIT：m_LastRiskLimitRiskReportMap
+  - 转发给有MESSAGE_RISKREPORT消息权限的monitor
+
+- EColoStatus：HandleColoStatus
+
+  - 如果在交易时段，ColoStatusMessage推入m_ColoStatusHistoryQueue
+  - 转发给有MESSAGE_COLOSTATUS消息权限的monitor
+
+- EAppStatus：HandleAppStatus
+
+  - 如果在交易时段，AppStatusMessage推入m_AppStatusHistoryQueue
+  - 更新m_LastAppStatusMap、m_AppStatusMap
+  - 转发给有MESSAGE_APPSTATUS消息权限的monitor
+
+- EFutureMarketData：HandleFutureMarketData
+
+  - 如果在交易时段，FutureMarketDataMessage推入m_FutureMarketDataHistoryQueue
+  - 更新m_LastFutureMarketDataMap
+  - 转发给有MESSAGE_FUTUREMARKET消息权限的monitor
+
+- EStockMarketData：HandleStockMarketData
+
+  - 如果在交易时段，StockMarketDataMessage推入m_StockMarketDataHistoryQueue
+
+  - 更新m_LastStockMarketDataMap
+
+  - 转发给有MESSAGE_FUTUREMARKET消息权限的monitor
+
+    
+
+5、如果m_newConnections.size>0，那么说明有新连接进来了
+
+- 如果在交易时段，发送EventgLog、AccountFund、AccountPosition、Market Data、OrderStatus、RiskReport、ColoStatus、AppStatus给m_newConnections中具有相应消息权限的monitor，并从m_newConnections中删除这个连接
+- 如果没在交易时段，只回放部分，并从m_newConnections中删除这个连接
+
+
+
+6、调用CheckAppStatus每天9:20开盘前检查App启动状态
+
+7、调用UpdateAppStatusTable每天15:20:00收盘前将appstatus存储至SQLite
+
+
+
+
+
+
+
+trader
 
 
 
@@ -74,47 +247,9 @@ api:
 
 
 
-Watcher:
-
-转发marketcenter、trader、riskJudge、quant的监控数据及所在服务器状态等
 
 
 
-Server:【消息中间件】
-
-转发monitor的报单撤单请求给trader、风控控制消息给riskJudge
-
-转发marketCenter的行情数据给monitor、转发trader的订单回报给monitor
-
-管理monitor的接入权限
-
-
-
-trader：
-
-交易网关，执行报单、撤单，管理订单回报。转发订单回报、资金信息、仓位信息给server
-
-
-
-riskJudge:
-
-
-
-watcher：
-
-监控进程，转发其他进程的消息至server，对colo服务器监控，对启动的trader...进程进行监控
-
-
-
-monitor：
-
-客户端操作界面
-
-
-
-quant：
-
-策略进程，根据行情出发交易信号
 
 
 
