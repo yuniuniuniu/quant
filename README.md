@@ -60,25 +60,19 @@
 
 ## 模块简介：
 
-MarketCenter【与期货公司的行情网关交互】
-
-marketgateway
-
-1、加载参数->创建行情api：CreateFtdcMdApi->注册回调类：RegisterSpi(this)->设置前置地址:RegisterFront->开始连接:Init
-
-2、前置机连接的回调函数OnFrontConnected中发送登陆请求：ReqUserLogin
-
-3、登陆回调函数OnRspUserLogin中开始订阅行情SubscribeMarketData
-
-4、在回调函数OnRtnDepthMarketData中收取数据，push入自身数据网关的ring buffer中
-
-
-
-MarketCenter
+## MarketCenter【与期货公司的行情网关交互】
 
 1、加载参数、建立tcp连接、初始化data logger、初始化对应marketgateway、初始化app状态、开启线程m_pMarketDataReceivedThread、m_pMarketDataHandleThread
 
 2、m_pMarketDataReceivedThread处理marketgateway做的事
+
+​		marketgateway
+
+- 加载参数->创建行情api：CreateFtdcMdApi->注册回调类：RegisterSpi(this)->设置前置地址:RegisterFront->开始连接:Init
+- 前置机连接的回调函数OnFrontConnected中发送登陆请求：ReqUserLogin
+
+- 登陆回调函数OnRspUserLogin中开始订阅行情SubscribeMarketData
+- 在回调函数OnRtnDepthMarketData中收取数据，push入自身数据网关的ring buffer中
 
 3、m_pMarketDataHandleThread中：
 
@@ -91,7 +85,7 @@ MarketCenter
 
 
 
-Watcher
+## Watcher[监控colo服务器、转发消息]
 
 1、加载参数、开启hpserver、建立与SERVER的连接
 
@@ -111,7 +105,7 @@ Watcher
 
 
 
-server
+## server【消息中间件】
 
 1、加载参数、获取数据库实例、加载数据库、读取permission表及appstatus状态表、注册hpserver
 
@@ -237,16 +231,336 @@ server
 
 
 
-trader
+## trader【用于于交易网关交互】
+
+1、获取日志实例、加载参数、加载本地的交易网关【用于与期货公司柜台通信，以动态库形式构建，插件形式加载】
+
+2、初始化并注册Order Channel Queue共享内存订单队列及Report Channel Queue共享内存订单回报队列，每个账户都分别注册自己的队列
+
+3、建立与watcher、riskjudge之间的tcp连接
+
+4、初始化app状态、CreateTraderAPI创建交易api、RegisterSpi注册回调函数、SubscribePublicTopic订阅公有流【接受共有数据如合约的状态】、SubscribePrivateTopic订阅私有流【接受私有数据如订单回报】、RegisterFront注册交易前置、Init连接柜台
+
+- 若连接成功，在OnFrontConnected回调函数中
+  - 改变登陆状态为ELOGIN_CONNECTED
+  - 生成连接日志EEventLogMessage、推入m_ReportMessageQueue回报消息队列
+  - ReqAuthenticate请求柜台身份认证，这里要填入AuthCode
+- 在OnRspAuthenticate回调函数中
+  - 若认证失败，则生成认证失败的EEventLogMessage，推入m_ReportMessageQueue
+  - 若认证成功
+    - 生成认证成功的EEventLogMessage，推入m_ReportMessageQueue
+    - 调用ReqUserLogin进行用户登陆
+- 在OnRspUserLogin回调函数中
+  - 若登陆失败，则生成登陆失败的EEventLogMessage，推入m_ReportMessageQueue
+  - 若登陆成功
+    - 生成登陆成功的EEventLogMessage，推入m_ReportMessageQueue
+    - 调用ReqSettlementInfoConfirm进行结算单确认
+- 在OnRspSettlementInfoConfirm回调函数中
+  - 若结算失败，则生成结算失败的EEventLogMessage，推入m_ReportMessageQueue
+  - 若结算成功
+    - 置连接状态为ELOGIN_SUCCESSED
+    - 生成结算成功的EEventLogMessage，推入m_ReportMessageQueue
+    - 调用InitPosition进行仓位初始化【建立映射关系】
+
+ps：请求是否失败是去检查Field是否为空且pRspInfo是否为空、pRspInfo->ErrorID是否>0
+
+- 若连接断开，在OnFrontDisconnected回调函数中
+  - 改变连接状态为ELOGIN_FAILED
+  - 生成断开日志EEventLogMessage、推入m_ReportMessageQueue回报消息队列
+- 若账户logout，在OnRspUserLogout回调函数中
+  - 生成日志EEventLogMessage、推入m_ReportMessageQueue回报消息队列
+
+5、如果m_ConnectedStatus为ELOGIN_FAILED，则
+
+- ReqQryFund查询账户资金
+  - 在OnRspQryTradingAccount回调函数中
+    - 更新m_AccountFundMap中对应账户的信息
+    - 生成EAccountFundMessage、推入m_ReportMessageQueue回报消息队列
+- ReqQryPoistion查询账户仓位
+  - 在OnRspQryInvestorPosition回调函数中
+    - 更新m_TickerAccountPositionMap中对应账户合约的仓位信息
+    - 生成EAccountFundMessage、推入m_ReportMessageQueue回报消息队列
+    - 根据持仓的ExchangeID进行区分【以下描述多仓，空仓类似】
+      - 如果是上期所或上海能源中心，如果回调的PositionDate字段是今仓THOST_FTDC_PSD_Today，赋值给map的value中LongTdVolume、LongOpenVolume如果是昨仓THOST_FTDC_PSD_History，赋值给LongYdVolume
+      - 如果是中金所及其他等，如果回调的时候根据总持仓Position-今仓TodayPosition计算得到昨仓，一旦OpenVolume>0说明今天开仓了，那么把昨仓转移到今仓
+    - 如果bIsLast为true报文结束，对所有账户仓位生成EAccountPositionMessage、推入m_ReportMessageQueue回报消息队列
+- ReqQryTrade查询成交
+  - 在回调函数OnRspQryTrade中不做操作
+- ReqQryOrder查询订单
+  - 在回调函数OnRspQryOrder中
+    - 如果订单状态不是THOST_FTDC_OST_Canceled或THOST_FTDC_OST_AllTraded
+      - 建立在m_OrderStatusMap中的映射，并更新其中字段
+      - 如果订单状态为THOST_FTDC_OST_PartTradedQueueing，更新订单状态为EPARTTRADED
+      - 如果订单状态为THOST_FTDC_OST_NoTradeQueueing，更新订单状态为EEXCHANGE_ACK
+      - UpdateOrderStatus将OrderStatusMessage推入m_ReportMessageQueue
+      - 调用UpdateFrozenPosition更新冻结的仓位LongOpeningVolume，构造EAccountPosition，推入m_ReportMessageQueue
+    - 如果bIsLast为true说明回报结束，如果置了CancelAll字段，对所有未完成订单调用CancelOrder进行撤单
+
+ps:
+
+每次请求的m_RequestID都要++，这样可以在回报中获取独有的m_RequestID
+
+每次都调用HandleRetCode对请求返回值进行处理、如果请求有错误，那么生成错误日志EEventLogMessage，推入m_ReportMessageQueue
+
+6、InitRiskCheck进行风控初始化检查
+
+- 构造EOrderRequestMessage且ERiskStatusType::ECHECK_INIT的报文推入m_RequestMessageQueue请求队列
+
+7、进入循环，如果在交易时段
+
+- ReadRequestFromMemory
+
+  - 取出m_OrderChannelQueue中的所有请求，推入m_RequestMessageQueue，请求都是由策略进程产生的
+
+- ReadRequestFromClient
+
+  - 取出m_HPPackClient->m_PackMessageQueue中的所有请求，请求都来自于monitor的操作。如果是报单、撤单，推入m_RequestMessageQueue，如果是资金转入转出等命令，直接调用交易api进行操作【期货中返回error invalid command至server】
+
+- HandleRequestMessage【m_RequestMessageQueue】
+
+  - 如果不需要风控，直接调用ReqInsertOrder下单
+  - 如果是EPREPARE_CHECKED、ECHECK_INIT的报单、撤单，发送给riskJudge进行风控检查
+
+- HandleRiskResponse【m_RiskClient->m_PackMessageQueue】
+
+  - ERiskReport：调用SendMonitorMessage将风控报告直接发送给monitor
+
+  - EOrderRequest中，检查ERiskStatusType
+
+    - ENOCHECKED、ECHECKED_PASS：调用ReqInsertOrder直接下单
+      - 利用Utils::getCurrentTodaySec() * 10000 + m_RequestID++生成唯一的orderRef
+      - 根据请求消息中的OrderType：EFOK|EFAKE|LIMIT判断订单类型
+      - 建立订单与其状态之间的映射m_OrderStatusMap，将订单的状态置为EORDER_SENDED，填充订单相关的手数、价格等信息，调用OrderSide函数计算出订单的方向，这里需要注意的是上期所、中金所在计算平今仓、平昨仓时有区别，中金所不区分今仓昨仓，根据position.FuturePosition.ShortTdVolume > 0将orderside置为平今；反之为平昨
+        - 报单不成功，则删除m_OrderStatusMap中映射关系
+        - 报单成功，则
+          - UpdatePosition更新m_TickerAccountPositionMap中仓位信息，构建仓位报文，推入m_ReportMessageQueue
+            - 判断为EORDER_SEND|EOPEN_LONG，更新LongOpeningVolume，其余的short等方向类似
+          - UpdateOrderStatus将OrderStatusMessage推入m_ReportMessageQueue
+          - 
+          - 
+        - 以下描述报单的一些回调函数
+        - OnErrRtnOrderInsert
+          - 若在m_OrderStatusMap中发现订单，置其订单状态为EBROKER_ERROR
+          - UpdatePosition减少 position.FuturePosition.LongOpeningVolume，构建仓位报文，推入m_ReportMessageQueue
+          - UpdateOrderStatus将OrderStatusMessage推入m_ReportMessageQueue
+          - 构造报单失败报文EEventLog，推入m_ReportMessageQueue
+          - 从m_OrderStatusMap删除该订单映射
+          - 若在m_OrderStatusMap中没发现订单
+          - 构造not found Order  EEventLog，推入m_ReportMessageQueue
+        - OnRtnOrder
+          - 若未在m_OrderStatusMap中发现订单
+          - 建立该订单在m_OrderStatusMap的映射，并用交易所回报字段更新
+          - 更新订单状态为EORDER_SENDED
+          - 调用UpdatePosition更新m_TickerAccountPositionMap中其对应的position，增加LongOpeningVolume，构建仓位报文，推入m_ReportMessageQueue
+          - 这时再去m_OrderStatusMap中找，即可找到对应订单
+          - 检查pOrder->OrderSubmitStatus
+            - 如果是THOST_FTDC_OSS_InsertSubmitted
+            - 检查pOrder->OrderStatus
+              - THOST_FTDC_OST_Unknown：
+              - 如果sys_ID未填充，置为Broker ACK状态
+              - 如果填充，置为EXCHANGE_ACK状态
+              - THOST_FTDC_OST_PartTradedQueueing：
+              - 置为PARTTRADED状态
+              - THOST_FTDC_OST_AllTraded：
+              - 置为ALLTRADED状态
+              - THOST_FTDC_OST_Canceled：【撤单、FAK、FOK】
+              - 如果已经有部分成交，置为PARTTRADED_CANCELLED状态
+              - 如果没有已成交，置为CANCELLED状态
+            - 如果OrderSubmitStatus是THOST_FTDC_OST_PartTradedQueueing
+              - 撤单请求被CTP校验通过，CTP返回当前订单状态给客户端，do nothing
+            - 如果OrderSubmitStatus是THOST_FTDC_OSS_Accepted
+              - 检查pOrder->OrderStatus
+              - THOST_FTDC_OST_NoTradeQueueing:
+              - 置为EXCHANGE_ACK状态
+              - THOST_FTDC_OST_PartTradedQueueing
+              - 置为PARTTRADED状态
+              - THOST_FTDC_OST_AllTraded
+              - 置为ALLTRADED状态
+              - THOST_FTDC_OST_Canceled：【撤单、FAK、FOK】
+              - 如果已经有部分成交，置为PARTTRADED_CANCELLED状态
+              - 如果没有已成交，置为CANCELLED状态
+            - 如果OrderSubmitStatus是THOST_FTDC_OSS_InsertRejected
+              - 说明报单被交易所拒绝，置状态为EXCHANGE_ERROR
+            - 如果OrderSubmitStatus是THOST_FTDC_OSS_CancelRejected
+              - 说明撤单被交易所拒绝，构造一条撤单失败警告日志，推入m_ReportMessageQueue
+          - 对于LIMIT订单
+            - 如果不是ALL_TRADED和PARTTRADED状态
+            - 调用UpdateOrderStatus，将更新的订单状态消息推入m_ReportMessageQueue
+            - 如果订单状态是PARTTRADED_CANCELLED、CANCELLED、EXCHANGE_ERROR
+              - 调用UpdatePosition更新仓位，构建仓位报文，推入m_ReportMessageQueue
+                - position.FuturePosition.LongOpeningVolume -= OrderStatus.CanceledVolume;
+              - 从m_OrderStatusMap中移除该订单
+          - 对于FAK、FOK订单
+            - 如果不是EALLTRADED及EPARTTRADED_CANCELLED状态
+            - 调用UpdateOrderStatus，将更新的订单状态消息推入m_ReportMessageQueue
+            - 如果订单状态是ECANCELLED、EEXCHANGE_ERROR
+              - 调用UpdatePosition更新仓位，构建仓位报文，推入m_ReportMessageQueue
+              - 并从m_OrderStatusMap中移除该订单
+      - OnRtnTrade
+        - 找到m_OrderStatusMap中对应订单
+        - 因为可能是分笔成交，因此要更新TotalTradedVolume、TradedVolume、TradedPrice、TradedAvgPrice
+        - 如果订单是限价单LIMIT：
+          - SendVolume=TotalTradedVolume说明全部成交，置订单状态为EALLTRADED
+          - 反之说明部分成交，置状态为EPARTTRADED
+          - 调用UpdatePosition更新仓位LongOpenVolume、LongTdVolume、LongYdVolume、LongOpeningVolume，构建仓位报文，推入m_ReportMessageQueue
+        - 如果订单是FAK、FOK：
+          - TotalTradedVolume=SendVolume表示完全成交，置状态为EALLTRADED
+          - 调用UpdatePosition更新仓位LongOpenVolume、LongTdVolume、LongYdVolume、LongOpeningVolume，构建仓位报文，推入m_ReportMessageQueue
+          - TotalTradedVolume=SendVolume-CanceledVolume，表示一部分成交，一部分取消，订单状态完结，先置状态为EPARTTRADED，调用UpdatePosition更新仓位，构建仓位报文，推入m_ReportMessageQueue；置状态为EPARTTRADED_CANCELLED，调用UpdatePosition更新仓位，构建仓位报文，推入m_ReportMessageQueue
+          - 除了上述两者情况外，都处于订单未完结状态，置状态为EPARTTRADED，调用UpdatePosition更新仓位
+          - 订单若处于EALLTRADED、EPARTTRADED_CANCELLED完结状态，从m_OrderStatusMap中将订单删除
+        - 若在m_OrderStatusMap没找到该订单，构建not found Order事件日志，推入m_ReportMessageQueue
+    - ECHECKED_NOPASS：调用ReqInsertOrderRejected处理风控拒单
+      - 构造风控拒单的OrderStatusMessage，订单状态为ERISK_ORDER_REJECTED
+      - UpdateOrderStatus将OrderStatusMessage推入m_ReportMessageQueue
+    - ECHECK_INIT：
+      - 构造风控初始化的OrderStatusMessage，订单状态为ERISK_CHECK_INIT
+      - UpdateOrderStatus将OrderStatusMessage推入m_ReportMessageQueue
+
+  - EActionRequest中，检查ERiskStatusType
+
+    - ENOCHECKED、ECHECKED_PASS：调用ReqCancelOrder直接下单
+
+      - 根据OrderRef找到要撤的单
+
+      - 填充撤单对应的field，进行撤单请求
+
+      - 将对应的订单状态改为ECANCELLING
+
+      - UpdateOrderStatus将OrderStatusMessage推入m_ReportMessageQueue
+
+      - 
+
+      - 以下描述撤单有关的回调函数
+
+      - OnRspOrderAction
+
+        - 如果是错误的回调
+        - 若在m_OrderStatusMap中发现订单，置订单状态为EACTION_ERROR
+
+        - UpdateOrderStatus将OrderStatusMessage推入m_ReportMessageQueue
+
+      - OnErrRtnOrderAction
+
+        - 若在m_OrderStatusMap中发现订单，置订单状态为EACTION_ERROR
+
+        - UpdateOrderStatus将OrderStatusMessage推入m_ReportMessageQueue
+        - 构造报单失败报文EEventLog，推入m_ReportMessageQueue
+        - 若在m_OrderStatusMap中没发现订单
+        - 构造not found Order  EEventLog，推入m_ReportMessageQueue
+
+        
+
+    - ECHECKED_NOPASS：调用ReqCancelOrderRejected处理风控拒单
+
+      - 构造风控拒单的OrderStatusMessage，订单状态为ERISK_ACTION_REJECTED
+      - UpdateOrderStatus将OrderStatusMessage推入m_ReportMessageQueue
+
+- HandleExecuteReport【m_TradeGateWay->m_ReportMessageQueue】
+
+  - EOrderStatus、EAccountFund、EAccountPosition类型的message推入m_ReportMessageQueue。并调用SendMonitorMessage发送给monitor【EOrderStatus类型的还要发送给riskjudge】
+  - EEventLog类型的message并调用SendMonitorMessage发送给monitor
+
+- WriteExecuteReportToMemory【m_ReportMessageQueue】
+
+  - 将m_ReportMessageQueue中的消息推入内存队列m_ReportChannelQueue中
+
+- 定时检查是否需要重连，如果需要重新连接trader
+
+  - DestroyTraderAPI->CreateTraderAPI->LoadTrader
+  - 重连日志消息推入m_ReportMessageQueue
+
+
+
+8、其他查询：
+
+- ReqQryTickerRate
+  - 查询保证金率接口：
+    - 对每个合约调用ReqQryInstrumentMarginRate进行查询
+  - 查询保证金计算价格类型，昨仓都用昨结算价，今仓可能用昨结算价、开仓价等
+    - 调用ReqQryBrokerTradingParams
+  - 查询是否支持单向大边
+    - ReqQryInstrument
+  - 查询合约手续费率
+    - 对每个合约调用ReqQryInstrumentCommissionRate进行查询
+  - 查询合约报单手续费   //成不成交都要给
+    - 对每个合约调用ReqQryInstrumentOrderCommRate进行查询
+
+
+
+ps:回调中的一些ErrorMsg都是gb2312格式的，需转化为utf-8
+
+​     回报中推入的m_ReportMessageQueue是在网关中
 
 
 
 
 
+## riskjudge【用于风控检查】
 
+1、注册日志、加载参数、加载风控数据库
 
+2、调用QueryRiskLimit、QueryCancelledCount、QueryLockedAccount将数据库中对应的表格加载至内存中对应数据结构中，构造ERiskReport报文，推入m_RiskResponseQueue中
 
+- QueryRiskLimit更新m_RiskLimitMap，其中包含FlowLimit、TickerCancelLimit、OrderCancelLimit，ERiskReportType为ERISK_LIMIT
+- QueryCancelledCount更新m_TickerCancelledCounterMap，ERiskReportType为ERISK_ACCOUNT_LOCKED
+- QueryLockedAccount更新m_AccountLockedStatusMap，ERiskReportType为ERISK_TICKER_CANCELLED
 
+3、注册服务端、连接watcher、发送初始化风控app状态给watcher
+
+4、开启两个线程m_RequestThread、m_ResponseThread
+
+5、m_RequestThread中：
+
+- 进入循环，从m_HPPackServer->m_RequestMessageQueue中pop出数据，调用HandleRequest对请求进行处理【来自trader】
+  - EOrderRequest：HandleOrderRequest
+    - 如果ERiskStatusType为ECHECK_INIT【风控初始化检查】，将报文推入m_RiskResponseQueue
+    - 调用check对报单进行风控检查
+    - 首先进行流速检查FlowLimited，对每s的订单数【包括报单撤单】检查：diff <= 1000则对应账户的订单数+1，diff>1000则ret为false；隔1s，重新开始计数。如果ret为false，置订单ERiskRejectedType为EFLOW_LIMITED，ERiskStatusType为ECHECKED_NOPASS
+    - 接着进行账户锁定检查AccountLocked【对撤单不检查】，如果对应账户的ERiskLockedSide为ELOCK_ACCOUNT、ELOCK_BUY或ELOCK_SELL，置ERiskRejectedType为EACCOUNT_LOCKED，置ERiskStatusType为ECHECKED_NOPASS
+    - 接着进行自成交检查SelfMatched，若订单方向是买，m_TickerPendingOrderListMap在途订单中有未成交的卖单，且价格比这次买的要低【卖的方向类似】，置ERiskRejectedType为ESELF_MATCHED，置ERiskStatusType为ECHECKED_NOPASS
+    - 若检查通过，将ERiskStatusType置为ECHECKED_PASS
+    - 若检查未通过，将ERiskStatusType置为ECHECKED_NOPASS
+    - 构建ERiskReport报文，ERiskReportType置为ERISK_EVENTLOG，推入m_RiskResponseQueue
+  - EActionRequest：HandleActionRequest
+    - 调用check对报单进行风控检查
+    - 首先进行流速检查FlowLimited，对每s的订单数【包括报单撤单】检查：diff <= 1000则对应账户的订单数+1，diff>1000则ret为false；隔1s，重新开始计数。如果ret为false，置订单ERiskRejectedType为EFLOW_LIMITED，ERiskStatusType为ECHECKED_NOPASS
+    - 接着进行撤单限制检查CancelLimited，
+      - 获取对应m_TickerCancelledCounterMap中的撤单次数若CancelRequestCount > m_XRiskLimit.TickerCancelLimit，则说明合约撤单次数达到限制，置ERiskRejectedType为ETICKER_ACTION_LIMITED，ERiskStatusType为ECHECKED_NOPASS。//m_TickerCancelledCounterMap中对应的value在orderstatus处理中更新
+      - 获取对应m_OrderCancelledCounterMap的订单撤单次数，若CancelRequestCount > m_XRiskLimit.OrderCancelLimit，说明订单撤单次数到达限制，则置ERiskRejectedType为EORDER_ACTION_LIMITED，ERiskStatusType为ECHECKED_NOPASS。
+    - 若检查通过，将ERiskStatusType置为ECHECKED_PASS
+    - 若检查未通过，将ERiskStatusType置为ECHECKED_NOPASS
+    - 构建ERiskReport报文，ERiskReportType置为ERISK_EVENTLOG，推入m_RiskResponseQueue
+  - EOrderStatus：HandleOrderStatus
+    - 若订单状态处于未完结状态：EPARTTRADED、EEXCHANGE_ACK、EORDER_SENDED，将订单加入m_PendingOrderMap、m_TickerPendingOrderListMap中对应ticker的orderList
+    - 当订单处于完结状态：EALLTRADED、EPARTTRADED_CANCELLED、ECANCELLED、EBROKER_ERROR、EEXCHANGE_ERROR。将订单从m_PendingOrderMap、m_TickerPendingOrderListMap中对应ticker的orderList、m_OrderCancelledCounterMap中移除
+    - 若订单状态为EPARTTRADED_CANCELLED、ECANCELLED、EEXCHANGE_ERROR【FAK、FOK的撤单不算】
+      - 若在m_TickerCancelledCounterMap中找到对应合约，对应的CancelledCount+1，调用UpdateCancelledCountTable更新数据库表。
+      - 若为找到，构建m_TickerCancelledCounterMap中新的映射，并将ERiskReportType置为RISK_TICKER_CANCELLED，调用UpdateCancelledCountTable更新数据库表
+    - 构建对应的风控报告，ERiskReport，推入m_RiskResponseQueue
+  - ELoginRequest：不处理
+  - EEventLog：发送给watcher
+- 从m_HPPackClient->m_PackMessageQueue中pop出数据，调用HandleCommand对指令进行处理【来自monitor】
+  - 调用HandleRiskCommand
+    - EUPDATE_RISK_LIMIT：
+      - 调用ParseUpdateRiskLimitCommand解析cmd至sql，调用UpdateRiskLimitTable更新RiskLimitTable
+      - 调用UpdateCancelledCountTable更新其中的UpperLimit
+      - 调用QueryCancelledCount更新m_TickerCancelledCounterMap，ERiskReportType为ERISK_ACCOUNT_LOCKED
+      - 调用QueryRiskLimit更新m_RiskLimitMap，ERiskReportType为ERISK_LIMIT
+      - 构造ERiskReport报文，推入m_RiskResponseQueue队列
+    - EUPDATE_RISK_ACCOUNT_LOCKED：
+      - ParseUpdateLockedAccountCommand解析cmd至sql，调用UpdateLockedAccountTable更新LockedAccountTable
+      - 遍历m_AccountLockedStatusMap，如果op为delete，保存需要置为EUNLOCK状态的账户
+      - QueryLockedAccount更新m_AccountLockedStatusMap，ERiskReportType为ERISK_TICKER_CANCELLED
+      - 删除m_AccountLockedStatusMap中保存的需要置为EUNLOCK状态的账户
+      - 构造ERiskReport报文，推入m_RiskResponseQueue队列
+
+6、m_ResponseThread中：
+
+- 进入循环，从m_RiskResponseQueue中pop数据，调用HandleResponse对回报进行处理
+  - EOrderRequest：发送给对应账户的trader
+  - EActionRequest：发送给对应账户的trader
+  - ERiskReport：风控报告发送给watcher
 
 
 
