@@ -1545,7 +1545,7 @@ void CTPTradeGateWay::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *
             }
             else
             {
-                AccountPosition.FuturePosition.LongTdVolume = pInvestorPosition->TodayPosition;  //中金所不分平今仓和平昨仓，一旦开仓，就是今仓
+                AccountPosition.FuturePosition.LongTdVolume = pInvestorPosition->TodayPosition;  //中金所不分平今仓和平昨仓,这里优先今仓
                 // 昨仓 = 总持仓 - 今仓；
                 AccountPosition.FuturePosition.LongYdVolume = pInvestorPosition->Position - pInvestorPosition->TodayPosition;
                 AccountPosition.FuturePosition.LongOpenVolume = pInvestorPosition->OpenVolume;

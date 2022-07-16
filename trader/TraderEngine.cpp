@@ -124,7 +124,7 @@ void TraderEngine::Run()
             {
                 m_TradeGateWay->ReqQryFund();
             }
-            currentTimeStamp += 1;
+            currentTimeStamp += 1;  ///防止1s内多次重连
         }
     }
 }
@@ -171,17 +171,17 @@ void TraderEngine::ReadRequestFromClient()
         {
             switch(message.MessageType)
             {
-                case Message::EMessageType::EOrderRequest:
+                case Message::EMessageType::EOrderRequest:  ///报单
                 {
                     m_RequestMessageQueue.push(message);
                     break;
                 }
-                case Message::EMessageType::EActionRequest:
+                case Message::EMessageType::EActionRequest:   ///撤单
                 {
                     m_RequestMessageQueue.push(message);
                     break;
                 }
-                case Message::EMessageType::ECommand:
+                case Message::EMessageType::ECommand:   ///资金转入转出等命令
                     HandleCommand(message);
                     break;
                 default:
@@ -216,15 +216,15 @@ void TraderEngine::HandleRequestMessage()
                     request.OrderRequest.BussinessType = m_XTraderConfig.BussinessType;
                     if(request.OrderRequest.RiskStatus == Message::ERiskStatusType::ENOCHECKED)
                     {
-                        SendRequest(request);
+                        SendRequest(request);   ///不需要风控，直接发给交易所
                     }
                     else if(request.OrderRequest.RiskStatus == Message::ERiskStatusType::EPREPARE_CHECKED)
                     {
-                        SendRiskCheckReqeust(request);
+                        SendRiskCheckReqeust(request);     ///需要风控，发给risk风控检查
                     }
                     else if(request.OrderRequest.RiskStatus == Message::ERiskStatusType::ECHECK_INIT)
                     {
-                        SendRiskCheckReqeust(request);
+                        SendRiskCheckReqeust(request);   ///启动时风控初始化检查
                     }
                     break;
                 }
@@ -232,11 +232,11 @@ void TraderEngine::HandleRequestMessage()
                 {
                     if(request.ActionRequest.RiskStatus == Message::ERiskStatusType::ENOCHECKED)
                     {
-                        SendRequest(request);
+                        SendRequest(request);    ///不需要风控，直接发给交易所
                     }
                     else if(request.ActionRequest.RiskStatus == Message::ERiskStatusType::EPREPARE_CHECKED)
                     {
-                        SendRiskCheckReqeust(request);
+                        SendRiskCheckReqeust(request);    ///需要风控，发给risk风控检查
                     }
                     break;
                 }
@@ -269,17 +269,17 @@ void TraderEngine::HandleRiskResponse()
             {
                 case Message::EMessageType::EOrderRequest:
                 {
-                    SendRequest(message);
+                    SendRequest(message);///处理报单及风控拒单
                     break;
                 }
                 case Message::EMessageType::EActionRequest:
                 {
-                    SendRequest(message);
+                    SendRequest(message);///处理撤单及风控拒单
                     break;
                 }
                 case Message::EMessageType::ERiskReport:
                 {
-                    SendMonitorMessage(message);
+                    SendMonitorMessage(message);///发送风控报告->watcher->monitor
                     break;
                 }
                 default:

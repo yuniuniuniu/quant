@@ -15,23 +15,23 @@ public:
     virtual void GetAPIVersion(std::string& APIVersion) = 0;
     virtual void CreateTraderAPI() = 0;
     virtual void DestroyTraderAPI() = 0;
-    virtual void ReqUserLogin() = 0;
+    virtual void ReqUserLogin() = 0;      
     virtual void LoadTrader() = 0;
     virtual void ReLoadTrader() = 0;
-    virtual int ReqQryFund() = 0;
-    virtual int ReqQryPoistion() = 0;
-    virtual int ReqQryTrade() = 0;
-    virtual int ReqQryOrder() = 0;
-    virtual int ReqQryTickerRate() = 0;
-    virtual void ReqInsertOrder(const Message::TOrderRequest& request) = 0;
-    virtual void ReqInsertOrderRejected(const Message::TOrderRequest& request) = 0;
-    virtual void ReqCancelOrder(const Message::TActionRequest& request) = 0;
-    virtual void ReqCancelOrderRejected(const Message::TActionRequest& request) = 0;
-    virtual void RepayMarginDirect(double value) = 0;
-    virtual void TransferFundIn(double value) = 0;
-    virtual void TransferFundOut(double value) = 0;
-    virtual void UpdatePosition(const Message::TOrderStatus& OrderStatus, Message::TAccountPosition& Position) = 0;
-    virtual void UpdateFund(const Message::TOrderStatus& OrderStatus, Message::TAccountFund& Fund) = 0;
+    virtual int ReqQryFund() = 0;  // 资金查询
+    virtual int ReqQryPoistion() = 0;  // 仓位查询
+    virtual int ReqQryTrade() = 0;  // 成交查询
+    virtual int ReqQryOrder() = 0;  // 委托查询
+    virtual int ReqQryTickerRate() = 0;  // 手续利率查询
+    virtual void ReqInsertOrder(const Message::TOrderRequest& request) = 0;  // 报单
+    virtual void ReqInsertOrderRejected(const Message::TOrderRequest& request) = 0;  // 处理被风控拒绝的报单请求
+    virtual void ReqCancelOrder(const Message::TActionRequest& request) = 0;  // 撤单
+    virtual void ReqCancelOrderRejected(const Message::TActionRequest& request) = 0;  // 处理被风控拒绝的撤单请求
+    virtual void RepayMarginDirect(double value) = 0;  // 使用信用账户内的现金直接偿还融资负债及利息
+    virtual void TransferFundIn(double value) = 0;  // 集中柜台资金划转到极速柜台
+    virtual void TransferFundOut(double value) = 0; // 极速柜台资金划转到集中柜台
+    virtual void UpdatePosition(const Message::TOrderStatus& OrderStatus, Message::TAccountPosition& Position) = 0;  // 更新仓位
+    virtual void UpdateFund(const Message::TOrderStatus& OrderStatus, Message::TAccountFund& Fund) = 0;  // 更新资金
 public:
     void SetLogger(Utils::Logger* logger)
     {
