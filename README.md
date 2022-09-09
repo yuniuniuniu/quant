@@ -36,7 +36,8 @@
 
 
 
-
+## 交流群
+![weixing.jpg](https://github.com/yuniuniuniu/quant/blob/main/jpg/weixing.jpg?raw=true)
 
 
 ## 项目架构
